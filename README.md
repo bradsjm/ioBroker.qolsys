@@ -1,4 +1,5 @@
 ![Logo](admin/qolsys.png)
+
 # ioBroker.qolsys
 
 [![NPM version](https://img.shields.io/npm/v/iobroker.qolsys.svg)](https://www.npmjs.com/package/iobroker.qolsys)
@@ -12,111 +13,101 @@
 
 ## qolsys adapter for ioBroker
 
-Supports the IQ Panel basic security features
+This plugin only supports the IQ Panel basic security features:
 
-## Developer manual
-This section is intended for the developer. It can be deleted later.
+| Feature                              | Status    |
+|--------------------------------------|-----------|
+| Arming partition (Arm-Away, Arm-Stay | Supported |
+| Disarming partition                  | Supported |
+| RF and wired sensor status           | Supported |
 
-### DISCLAIMER
+## Supported Qolsys Panels
 
-Please make sure that you consider copyrights and trademarks when you use names or logos of a company and add a disclaimer to your README.
-You can check other adapters for examples or ask in the developer community. Using a name or logo of a company without permission may cause legal problems for you.
+| Panel                                       | Status    | Notes                                            |
+|---------------------------------------------|-----------|--------------------------------------------------|
+| [IQ2](https://qolsys.com/iq-panel-2/)       | Supported | Software >= 2.4.0                                |
+| [IQ2+](https://qolsys.com/iq-panel-2-plus/) | Supported | For software >= 2.6.2: Enable 6-digit user codes |
+| [IQ4](https://qolsys.com/iq-panel-4/)       | Supported | Software >= 4.1.0                                |
 
-### Getting started
+## Supported Sensors
 
-You are almost done, only a few steps left:
-1. Create a new repository on GitHub with the name `ioBroker.qolsys`
-1. Initialize the current folder as a new git repository:  
-    ```bash
-    git init -b main
-    git add .
-    git commit -m "Initial commit"
-    ```
-1. Link your local repository with the one on GitHub:  
-    ```bash
-    git remote add origin https://github.com/bradsjm/ioBroker.qolsys
-    ```
+| Sensor                      | Role                        | Notes              |
+|-----------------------------|-----------------------------|--------------------|
+| MOTION                      | sensor.motion               |                    |
+| OCCUPANCY_SENSOR            | sensor.motion               |                    |
+| PANEL_MOTION                | sensor.motion               |                    |
+| BREAKAGE                    | sensor.noise                |                    |
+| GLASSBREAK                  | sensor.noise                |                    |
+| PANEL_GLASS_BREAK           | sensor.noise                |                    |
+| SHOCK                       | sensor.noise                |                    |
+| SHOCK_OTHERS                | sensor.noise                |                    |
+| SHOCK_SENSOR_MULTI_FUNCTION | sensor.noise                |                    |
+| SMOKE_HEAT                  | sensor.alarm.fire           |                    |
+| SMOKE_MULTI_FUNCTION        | sensor.alarm.fire           |                    |
+| CONTACT                     | sensor.contact.window\|door | Will use door by   |
+| CONTACT_MULTI_FUNCTION      | sensor.contact.window\|door | default unless     |
+| TAKEOVER_MODULE             | sensor.contact.window\|door | window is found in |
+| WIRED_SENSOR                | sensor.contact.window\|door | the name.          |
+| WATER                       | sensor.alarm.flood          |                    |
+| WATER_IQ_FLOOD              | sensor.alarm.flood          |                    |
+| WATER_OTHER_FLOOD           | sensor.alarm.flood          |                    |
+| CARBON_MONOXIDE             | sensor.alarm                |                    |
+| FREEZE                      | sensor.alarm                |                    |
+| RF_KEYPAD                   | sensor.alarm                |                    |
+| TEMPERATURE                 | sensor.alarm                |                    |
+| TEMPERATURE_MULTI_FUNCTION  | sensor.alarm                |                    |
 
-1. Push all files to the GitHub repo:  
-    ```bash
-    git push origin main
-    ```
-1. Add a new secret under https://github.com/bradsjm/ioBroker.qolsys/settings/secrets. It must be named `AUTO_MERGE_TOKEN` and contain a personal access token with push access to the repository, e.g. yours. You can create a new token under https://github.com/settings/tokens.
+## Qolsys Panel Configuration
 
-1. Head over to [src/main.ts](src/main.ts) and start programming!
+**Note**: Enabling C4 integration will force the use of 6 digit codes!
+Existing codes will have 00 appended to them.
 
-### Best Practices
-We've collected some [best practices](https://github.com/ioBroker/ioBroker.repositories#development-and-coding-best-practices) regarding ioBroker development and coding in general. If you're new to ioBroker or Node.js, you should
-check them out. If you're already experienced, you should also take a look at them - you might learn something new :)
+### IQ2, IQ2+ and IQ4
 
-### Scripts in `package.json`
-Several npm scripts are predefined for your convenience. You can run them using `npm run <scriptname>`
-| Script name | Description |
-|-------------|-------------|
-| `build` | Compile the TypeScript sources. |
-| `watch` | Compile the TypeScript sources and watch for changes. |
-| `test:ts` | Executes the tests you defined in `*.test.ts` files. |
-| `test:package` | Ensures your `package.json` and `io-package.json` are valid. |
-| `test:integration` | Tests the adapter startup with an actual instance of ioBroker. |
-| `test` | Performs a minimal test run on package files and your tests. |
-| `check` | Performs a type-check on your code (without compiling anything). |
-| `lint` | Runs `ESLint` to check your code for formatting errors and potential bugs. |
-| `translate` | Translates texts in your adapter to all required languages, see [`@iobroker/adapter-dev`](https://github.com/ioBroker/adapter-dev#manage-translations) for more details. |
-| `release` | Creates a new release, see [`@alcalzone/release-script`](https://github.com/AlCalzone/release-script#usage) for more details. |
+1. Start by enabling Control 4 integration on Qolsys panel:
+    1. Settings
+    2. Advanced Settings
+    3. Enter Dealer Code (defaults to 2222 or 222200)
+    4. Installation
+    5. Devices
+    6. WIFI Devices
+    7. 3rd Party Connections
+    8. Check the Control4 box
+    9. Reboot Qolsys Panel
 
-### Configuring the compilation
-The adapter template uses [esbuild](https://esbuild.github.io/) to compile TypeScript and/or React code. You can configure many compilation settings 
-either in `tsconfig.json` or by changing options for the build tasks. These options are described in detail in the
-[`@iobroker/adapter-dev` documentation](https://github.com/ioBroker/adapter-dev#compile-adapter-files).
+2. Reveal Secure Access Token:
+    1. Settings
+    2. Advanced Settings
+    3. Enter Dealer Code (defaults to 2222)
+    4. Installation
+    5. Devices
+    6. WIFI Devices
+    7. 3rd Party Connections
+    8. Select Reveal Secure Token field
 
-### Writing tests
-When done right, testing code is invaluable, because it gives you the 
-confidence to change your code while knowing exactly if and when 
-something breaks. A good read on the topic of test-driven development 
-is https://hackernoon.com/introduction-to-test-driven-development-tdd-61a13bc92d92. 
-Although writing tests before the code might seem strange at first, but it has very 
-clear upsides.
+## Credits
 
-The template provides you with basic tests for the adapter startup and package files.
-It is recommended that you add your own tests into the mix.
-
-### Publishing the adapter
-Using GitHub Actions, you can enable automatic releases on npm whenever you push a new git tag that matches the form 
-`v<major>.<minor>.<patch>`. We **strongly recommend** that you do. The necessary steps are described in `.github/workflows/test-and-release.yml`.
-
-Since you installed the release script, you can create a new
-release simply by calling:
-```bash
-npm run release
-```
-Additional command line options for the release script are explained in the
-[release-script documentation](https://github.com/AlCalzone/release-script#command-line).
-
-To get your adapter released in ioBroker, please refer to the documentation 
-of [ioBroker.repositories](https://github.com/ioBroker/ioBroker.repositories#requirements-for-adapter-to-get-added-to-the-latest-repository).
-
-### Test the adapter manually with dev-server
-Since you set up `dev-server`, you can use it to run, test and debug your adapter.
-
-You may start `dev-server` by calling from your dev directory:
-```bash
-dev-server watch
-```
-
-The ioBroker.admin interface will then be available at http://localhost:8081/
-
-Please refer to the [`dev-server` documentation](https://github.com/ioBroker/dev-server#command-line) for more details.
+- [Home Assistant support thread](https://community.home-assistant.io/t/qolsys-iq-panel-2-and-3rd-party-integration/231405)
+- [Homebridge Qolsys IQ Panel plugin (EHylands)](https://github.com/EHylands/homebridge-qolsys)
+- [Hubitat QolSysIQPanel plugin (dcaton)](https://github.com/dcaton/Hubitat/tree/main/QolSysIQPanel)
 
 ## Changelog
+
 <!--
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
 
+### 0.0.1 (2023-24-5)
+
+* Initial development
+
 ### **WORK IN PROGRESS**
-* (Jonathan Bradshaw) initial release
+
+* Testing
 
 ## License
+
 MIT License
 
 Copyright (c) 2023 Jonathan Bradshaw <jb@nrgup.net>

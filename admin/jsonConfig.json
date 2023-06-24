@@ -1,59 +1,59 @@
 {
-  "i18n": false,
-  "type": "panel",
-  "items": {
-    "host": {
-      "type": "text",
-      "label": "Hostname",
-      "help": "Hostname or IP address of the Qolsys IQ panel",
-      "sm": 3
-    },
-    "port": {
-      "type": "number",
-      "label": "Port Number",
-      "help": "Port number of the Qolsys IQ panel (usually 12345)",
-      "default": 12345,
-      "sm": 2
-    },
-    "secureToken": {
-      "type": "password",
-      "visible": true,
-      "label": "Secure Token",
-      "help": "C4 Secure Token from the Qolsys IQ panel admin",
-      "sm": 3,
-      "newLine": true
-    },
-    "userPinCode": {
-      "type": "password",
-      "visible": true,
-      "label": "User Pin Code",
-      "help": "Pin code to use when arming/disarming",
-      "sm": 2,
-      "maxLength": 6
-    },
-    "enableArming": {
-      "type": "checkbox",
-      "label": "Enable arming panel",
-      "help": "Allow adapter to send arming requests to the panel",
-      "sm": 5,
-      "default": false,
-      "newLine": true
-    },
-    "enableDisarming": {
-      "type": "checkbox",
-      "label": "Enable disarming panel",
-      "help": "Allow adapter to send disarming requests to the panel",
-      "sm": 5,
-      "default": true,
-      "newLine": true
-    },
-    "enableAlarms": {
-      "type": "checkbox",
-      "label": "Enable triggering alarms",
-      "help": "Allow the adapter to trigger police/fire/aux alarms",
-      "sm": 35,
-      "default": false,
-      "newLine": true
+    "i18n": true,
+    "type": "panel",
+    "items": {
+        "host": {
+            "type": "text",
+            "label": "Hostname",
+            "help": "Hostname or IP address of the Qolsys IQ panel",
+            "sm": 3
+        },
+        "port": {
+            "type": "number",
+            "label": "Port Number",
+            "help": "Port number of the Qolsys IQ panel (usually 12345)",
+            "default": 12345,
+            "sm": 2
+        },
+        "secureToken": {
+            "type": "password",
+            "visible": true,
+            "label": "Secure Token",
+            "help": "C4 Secure Token from the Qolsys IQ panel admin",
+            "sm": 3,
+            "newLine": true
+        },
+        "userPinCode": {
+            "type": "password",
+            "visible": true,
+            "label": "User Pin Code",
+            "help": "Pin code to use when arming/disarming",
+            "sm": 2,
+            "maxLength": 6
+        },
+        "enableArming": {
+            "type": "checkbox",
+            "label": "Enable arming panel",
+            "help": "Allow adapter to send arming requests to the panel",
+            "sm": 5,
+            "default": false,
+            "newLine": true
+        },
+        "enableDisarming": {
+            "type": "checkbox",
+            "label": "Enable disarming panel",
+            "help": "Allow adapter to send disarming requests to the panel",
+            "sm": 5,
+            "default": true,
+            "newLine": true
+        },
+        "enableAlarms": {
+            "type": "checkbox",
+            "label": "Enable triggering alarms",
+            "help": "Allow the adapter to trigger police/fire/aux alarms",
+            "sm": 35,
+            "default": false,
+            "newLine": true
+        }
     }
-  }
 }
