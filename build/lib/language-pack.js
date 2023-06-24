@@ -151,32 +151,6 @@ const LanguagePack = {
     "pl": "W przypadku gdy uzbrojenie wymaga kodu pinowego",
     "uk": "\u0406\u043D\u0434\u0438\u043A\u0430\u0442\u043E\u0440\u0438, \u044F\u043A\u0449\u043E \u043E\u0431\u0440\u043E\u0431\u043A\u0430 \u0432\u0438\u043C\u0430\u0433\u0430\u0454 \u043A\u043E\u043D\u0442\u0430\u043A\u0442\u043D\u043E\u0433\u043E \u043A\u043E\u0434\u0443",
     "zh-cn": "\u5982\u679C\u8981\u505A\u4E8B,\u5219\u5FC5\u987B\u6709\u6761\u76EE\u3002"
-  },
-  State: {
-    "en": "State",
-    "de": "Staat",
-    "ru": "\u0413\u043E\u0441\u0443\u0434\u0430\u0440\u0441\u0442\u0432\u043E",
-    "pt": "Estado",
-    "nl": "Staats State",
-    "fr": "\xC9tat",
-    "it": "Stato",
-    "es": "Estado",
-    "pl": "Pa\u0144stwo",
-    "uk": "\u0421\u0442\u0430\u043D",
-    "zh-cn": "$\u56FD\u5BB6"
-  },
-  Tamper: {
-    "en": "Tamper",
-    "de": "Tamper",
-    "ru": "\u0422\u0430\u043C\u043F\u0435\u0440\u0435",
-    "pt": "Tamp\xE3o",
-    "nl": "Tamper",
-    "fr": "Tamper",
-    "it": "Ammortizzatore",
-    "es": "Tamper",
-    "pl": "Tamper",
-    "uk": "\u0422\u0430\u043C\u043F\u0435\u0440",
-    "zh-cn": "\u5766\u4F69\u5C14"
   }
 };
 // Annotate the CommonJS export names for ESM import in node:

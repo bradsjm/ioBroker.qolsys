@@ -129,45 +129,30 @@ class QolsysPanel extends utils.Adapter {
      * @param role - The object role
      */
     private async createZoneObjects(zone: ZoneJson, role: string): Promise<void> {
-        const zoneTypeTitle = convertToTitleCase(zone.type);
-        await this.createChannelAsync("zones", zone.id, { name: zone.name }, {
-            zone_id: zone.zone_id,
-            partition_id: zone.partition_id
-        });
-        await this.createStateAsync("zones", zone.id, "state", {
-            name: LanguagePack.State,
-            desc: zoneTypeTitle,
-            type: "boolean",
-            states: {
-                "true": "Open",
-                "false": "Closed"
+        const zoneTypeTitle = `${convertToTitleCase(zone.type)} (${zone.group})`;
+        await this.setObjectAsync(`zones.${zone.id}`, {
+            type: "state",
+            common: {
+                name: zone.name,
+                desc: zoneTypeTitle,
+                type: "boolean",
+                states: {
+                    "true": "Open",
+                    "false": "Closed"
+                },
+                role: role,
+                read: true,
+                write: false,
+                def: false
             },
-            role: role,
-            read: true,
-            write: false,
-            def: false
-        },
-        {
-            group: zone.group,
-            partition_id: zone.partition_id,
-            zone_alarm_type: zone.zone_alarm_type,
-            zone_id: zone.zone_id,
-            zone_physical_type: zone.zone_physical_type
+            native: {
+                group: zone.group,
+                partition_id: zone.partition_id,
+                zone_alarm_type: zone.zone_alarm_type,
+                zone_id: zone.zone_id,
+                zone_physical_type: zone.zone_physical_type
+            }
         });
-        await this.createStateAsync("zones", zone.id, "tamper", {
-            name: LanguagePack.Tamper,
-            desc: zoneTypeTitle,
-            type: "boolean",
-            states: {
-                "true": "Tampered",
-                "false": "Normal"
-            },
-            role: "indicator.alarm",
-            read: true,
-            write: false,
-            def: false
-        },
-        { partition_id: zone.partition_id });
     }
 
     /**
@@ -370,11 +355,7 @@ class QolsysPanel extends utils.Adapter {
         }
 
         await this.createZoneObjects(zone, role);
-        const stateId = `zones.${zone.id}.state`;
-
-        if (event === "active") {
-            await this.updateZoneTamperState(zone);
-        }
+        const stateId = `zones.${zone.id}`;
 
         this.log.debug(`setting zone #${zone.zone_id} (${zone.name}) to ${zone.status}`);
         const isOpen = zone.status === "Open";
@@ -489,29 +470,6 @@ class QolsysPanel extends utils.Adapter {
                 const id = `panel.partition${partitionId + 1}.isFaulted`;
                 await this.setStateChangedAsync(id, { val: isFaulted, ack: true });
             }
-        }
-    }
-
-    /**
-     * Update tamper state of zone
-     * @param zone the zone
-     */
-    private async updateZoneTamperState(zone: ZoneJson): Promise<void> {
-        const stateId = `zones.${zone.id}.state`;
-        const tamperId = `zones.${zone.id}.tamper`;
-        const isOpen = zone.status === "Open";
-
-        const currentState = await this.getStateAsync(stateId);
-        const tamperState = await this.getStateAsync(tamperId);
-
-        if (isOpen && currentState?.val) {
-            // An Open sensor being Open through ZONE_ACTIVE is now tampered
-            this.log.debug(`tampering zone #${zone.zone_id} (${zone.name})`);
-            await this.setStateChangedAsync(tamperId, { val: true, ack: true });
-        } else if (!isOpen && tamperState?.val) {
-            // A tampered sensor being Closed through ZONE_ACTIVE is no more tampered
-            this.log.debug(`not tampering zone #${zone.zone_id} (${zone.name})`);
-            await this.setStateChangedAsync(tamperId, { val: false, ack: true });
         }
     }
 }

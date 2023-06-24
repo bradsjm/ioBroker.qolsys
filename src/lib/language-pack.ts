@@ -8,9 +8,7 @@ type LanguageKeys =
     | "PanelCommand"
     | "PanelCommandDescription"
     | "RequirePin"
-    | "RequirePinDescription"
-    | "State"
-    | "Tamper";
+    | "RequirePinDescription";
 
 export const LanguagePack: Record<LanguageKeys, ioBroker.StringOrTranslated> = {
     ArmState: {
@@ -142,31 +140,5 @@ export const LanguagePack: Record<LanguageKeys, ioBroker.StringOrTranslated> = {
         "pl": "W przypadku gdy uzbrojenie wymaga kodu pinowego",
         "uk": "Індикатори, якщо обробка вимагає контактного коду",
         "zh-cn": "如果要做事,则必须有条目。"
-    },
-    State: {
-        "en": "State",
-        "de": "Staat",
-        "ru": "Государство",
-        "pt": "Estado",
-        "nl": "Staats State",
-        "fr": "État",
-        "it": "Stato",
-        "es": "Estado",
-        "pl": "Państwo",
-        "uk": "Стан",
-        "zh-cn": "$国家"
-    },
-    Tamper: {
-        "en": "Tamper",
-        "de": "Tamper",
-        "ru": "Тампере",
-        "pt": "Tampão",
-        "nl": "Tamper",
-        "fr": "Tamper",
-        "it": "Ammortizzatore",
-        "es": "Tamper",
-        "pl": "Tamper",
-        "uk": "Тампер",
-        "zh-cn": "坦佩尔"
     }
 };
