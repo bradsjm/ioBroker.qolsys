@@ -3,6 +3,7 @@
 !.github/
 !.eslintrc.js
 !.eslintignore
+!.releaseconfig.json
 
 build/
 
