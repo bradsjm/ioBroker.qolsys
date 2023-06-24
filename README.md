@@ -97,14 +97,13 @@ Existing codes will have 00 appended to them.
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
+### 0.0.2-alpha.0 (2023-06-24)
+
+* Testing
 
 ### 0.0.1 (2023-24-5)
 
 * Initial development
-
-### **WORK IN PROGRESS**
-
-* Testing
 
 ## License
 
