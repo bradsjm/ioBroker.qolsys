@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["../../src/interfaces/alarm-json.interface.ts"],
+  "sourcesContent": ["import { AlarmType } from \"../enums\";\n\nexport interface AlarmJson {\n    alarm_type: AlarmType;\n    partition_id: number;\n}\n"],
+  "mappings": ";;;;;;;;;;;;;;AAAA;AAAA;",
+  "names": []
+}

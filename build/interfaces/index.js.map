@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["../../src/interfaces/index.ts"],
+  "sourcesContent": ["import { AlarmJson } from \"./alarm-json.interface\";\nimport { ArmingJson } from \"./arming-json.interface\";\nimport { ErrorJson } from \"./error-json.interface\";\nimport { PartitionJson } from \"./partition-json.interface\";\nimport { PayloadJson } from \"./payload-json.interface\";\nimport { ZoneJson } from \"./zone-json.interface\";\n\nexport {\n    ArmingJson,\n    AlarmJson,\n    ErrorJson,\n    PartitionJson,\n    PayloadJson,\n    ZoneJson\n}\n"],
+  "mappings": ";;;;;;;;;;;;;;;;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA,wBAA0B;AAC1B,yBAA2B;AAC3B,wBAA0B;AAC1B,4BAA8B;AAC9B,0BAA4B;AAC5B,uBAAyB;",
+  "names": []
+}

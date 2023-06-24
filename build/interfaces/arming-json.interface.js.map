@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["../../src/interfaces/arming-json.interface.ts"],
+  "sourcesContent": ["import { ArmingStateType } from \"../enums\";\n\nexport interface ArmingJson {\n    arming_type: ArmingStateType;\n    delay?: number;\n    partition_id: number;\n}\n"],
+  "mappings": ";;;;;;;;;;;;;;AAAA;AAAA;",
+  "names": []
+}

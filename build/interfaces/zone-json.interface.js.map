@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["../../src/interfaces/zone-json.interface.ts"],
+  "sourcesContent": ["\n\nexport interface ZoneJson {\n    group: string;\n    id: string;\n    name: string;\n    partition_id: number;\n    state: string;\n    status: string;\n    type: string;\n    zone_alarm_type: number;\n    zone_id: number;\n    zone_physical_type: number;\n    zone_type: number;\n}\n"],
+  "mappings": ";;;;;;;;;;;;;;AAAA;AAAA;",
+  "names": []
+}

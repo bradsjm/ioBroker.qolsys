@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["../../src/enums/event-type.enum.ts"],
+  "sourcesContent": ["export enum EventType {\n    INFO = \"INFO\",\n    ZONE = \"ZONE_EVENT\",\n    ARMING = \"ARMING\",\n    ALARM = \"ALARM\",\n    ERROR = \"ERROR\"\n}\n"],
+  "mappings": ";;;;;;;;;;;;;;;;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAO,IAAK,YAAL,kBAAKA,eAAL;AACH,EAAAA,WAAA,UAAO;AACP,EAAAA,WAAA,UAAO;AACP,EAAAA,WAAA,YAAS;AACT,EAAAA,WAAA,WAAQ;AACR,EAAAA,WAAA,WAAQ;AALA,SAAAA;AAAA,GAAA;",
+  "names": ["EventType"]
+}

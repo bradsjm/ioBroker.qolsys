@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["../../src/enums/alarm-type.enum.ts"],
+  "sourcesContent": ["export enum AlarmType {\n    POLICE = \"POLICE\",\n    FIRE = \"FIRE\",\n    AUX = \"AUXILIARY\"\n}\n"],
+  "mappings": ";;;;;;;;;;;;;;;;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAO,IAAK,YAAL,kBAAKA,eAAL;AACH,EAAAA,WAAA,YAAS;AACT,EAAAA,WAAA,UAAO;AACP,EAAAA,WAAA,SAAM;AAHE,SAAAA;AAAA,GAAA;",
+  "names": ["AlarmType"]
+}

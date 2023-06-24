@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["../../src/enums/action-type.enum.ts"],
+  "sourcesContent": ["export enum ActionType {\n    ALARM = \"ALARM\",\n    ARMING = \"ARMING\",\n    INFO = \"INFO\"\n}\n"],
+  "mappings": ";;;;;;;;;;;;;;;;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAO,IAAK,aAAL,kBAAKA,gBAAL;AACH,EAAAA,YAAA,WAAQ;AACR,EAAAA,YAAA,YAAS;AACT,EAAAA,YAAA,UAAO;AAHC,SAAAA;AAAA,GAAA;",
+  "names": ["ActionType"]
+}

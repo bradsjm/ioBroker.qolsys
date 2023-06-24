@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["../../src/interfaces/partition-json.interface.ts"],
+  "sourcesContent": ["import { ArmingStateType } from \"../enums\";\nimport { ZoneJson } from \"./zone-json.interface\";\n\nexport interface PartitionJson {\n    name: string;\n    partition_id: number;\n    secure_arm: boolean;\n    status: ArmingStateType;\n    zone_list: ZoneJson[];\n}\n"],
+  "mappings": ";;;;;;;;;;;;;;AAAA;AAAA;",
+  "names": []
+}

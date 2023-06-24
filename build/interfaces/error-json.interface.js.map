@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["../../src/interfaces/error-json.interface.ts"],
+  "sourcesContent": ["export interface ErrorJson {\n    description: string;\n    error_type: string;\n    partition_id: number;\n}\n"],
+  "mappings": ";;;;;;;;;;;;;;AAAA;AAAA;",
+  "names": []
+}

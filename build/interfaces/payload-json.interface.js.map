@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["../../src/interfaces/payload-json.interface.ts"],
+  "sourcesContent": ["import { ActionType, AlarmType, ArmingStateType, EventType, InfoType, ZoneEventType } from \"../enums\";\nimport { PartitionJson } from \"./partition-json.interface\";\nimport { ZoneJson } from \"./zone-json.interface\";\n\nexport interface PayloadJson {\n    action?: ActionType;\n    alarm_type?: AlarmType;\n    arming_type?: ArmingStateType;\n    bypass?: boolean;\n    delay?: number;\n    description?: string;\n    entry_delay?: number;\n    error_type?: string;\n    event?: EventType;\n    exit_delay?: number;\n    info_type?: InfoType;\n    nonce?: string;\n    partition_id?: number;\n    partition_list?: PartitionJson[];\n    requestId?: string;\n    source?: string;\n    token?: string;\n    usercode?: string;\n    value?: unknown;\n    version?: number;\n    zone?: ZoneJson;\n    zone_event_type?: ZoneEventType;\n}\n"],
+  "mappings": ";;;;;;;;;;;;;;AAAA;AAAA;",
+  "names": []
+}

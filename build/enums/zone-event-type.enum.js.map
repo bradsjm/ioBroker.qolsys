@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["../../src/enums/zone-event-type.enum.ts"],
+  "sourcesContent": ["export enum ZoneEventType {\n    ZONE_ACTIVE = \"ZONE_ACTIVE\",\n    ZONE_ADD = \"ZONE_ADD\",\n    ZONE_DELETE = \"ZONE_DELETE\",\n    ZONE_UPDATE = \"ZONE_UPDATE\"\n}\n"],
+  "mappings": ";;;;;;;;;;;;;;;;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAO,IAAK,gBAAL,kBAAKA,mBAAL;AACH,EAAAA,eAAA,iBAAc;AACd,EAAAA,eAAA,cAAW;AACX,EAAAA,eAAA,iBAAc;AACd,EAAAA,eAAA,iBAAc;AAJN,SAAAA;AAAA,GAAA;",
+  "names": ["ZoneEventType"]
+}

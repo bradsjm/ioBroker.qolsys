@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["../../src/enums/arming-type.enum.ts"],
+  "sourcesContent": ["export enum ArmingStateType {\n    AWAY_EXIT_DELAY = \"ARM-AWAY-EXIT-DELAY\",\n    STAY_EXIT_DELAY = \"ARM-STAY-EXIT-DELAY\",\n    ENTRY_DELAY = \"ENTRY_DELAY\",\n    EXIT_DELAY = \"EXIT_DELAY\",\n    DISARM = \"DISARM\",\n    ARM_STAY = \"ARM_STAY\",\n    ARM_AWAY = \"ARM_AWAY\"\n}\n"],
+  "mappings": ";;;;;;;;;;;;;;;;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAO,IAAK,kBAAL,kBAAKA,qBAAL;AACH,EAAAA,iBAAA,qBAAkB;AAClB,EAAAA,iBAAA,qBAAkB;AAClB,EAAAA,iBAAA,iBAAc;AACd,EAAAA,iBAAA,gBAAa;AACb,EAAAA,iBAAA,YAAS;AACT,EAAAA,iBAAA,cAAW;AACX,EAAAA,iBAAA,cAAW;AAPH,SAAAA;AAAA,GAAA;",
+  "names": ["ArmingStateType"]
+}
