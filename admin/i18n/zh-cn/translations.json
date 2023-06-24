@@ -1,0 +1,13 @@
+{
+    "Hostname": "主机名",
+    "Hostname or IP address of the Qolsys IQ panel": "Qolsys IQ 面板的主机名或 IP 地址",
+    "Port Number": "端口号",
+    "Port number of the Qolsys IQ panel (usually 12345)": "Qolsys IQ 面板的端口号（通常为 12345）",
+    "Secure Token": "安全令牌",
+    "C4 Secure Token from the Qolsys IQ panel admin": "来自 Qolsys IQ 面板管理员的 C4 安全令牌",
+    "Pin code to use when arming/disarming": "布防/撤防时使用的密码",
+    "User Pin Code": "用户密码",
+    "Enable arming panel": "启用布防面板",
+    "Enable disarming panel": "启用撤防面板",
+    "Enable triggering alarms": "启用触发警报"
+}

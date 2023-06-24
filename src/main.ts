@@ -5,13 +5,7 @@ import { AlarmJson, ArmingJson, ErrorJson, PartitionJson, ZoneJson } from "./int
 import { QolsysEventParser } from "./lib/qolsys-event-parser";
 import { QolsysPanelClient } from "./lib/qolsys-panel-client";
 import { convertToTitleCase, getPath, getZoneRole } from "./lib/utils";
-import {
-    PanelAlarmStateCommon,
-    PanelArmDelayCommon,
-    PanelArmStateCommon,
-    PanelCommandStateCommon,
-    PanelSecureArmCommon
-} from "./lib/iobroker-states";
+import { LanguagePack } from "./lib/language-pack";
 
 /**
  * Qolsys IQ Panel adapter.
@@ -43,11 +37,86 @@ class QolsysPanel extends utils.Adapter {
      */
     private async createPartitionObjects(id: string, partition: PartitionJson): Promise<void> {
         await this.createChannelAsync("panel", id, { name: partition.name });
-        await this.createStateAsync("panel", id, "command", PanelCommandStateCommon, { partition_id: partition.partition_id });
-        await this.createStateAsync("panel", id, "alarmState", PanelAlarmStateCommon);
-        await this.createStateAsync("panel", id, "armDelay", PanelArmDelayCommon);
-        await this.createStateAsync("panel", id, "armState", PanelArmStateCommon, { partition_id: partition.partition_id });
-        await this.createStateAsync("panel", id, "secureArm", PanelSecureArmCommon);
+        await this.createStateAsync("panel", id, "command", {
+            name: LanguagePack.PanelCommand,
+            desc: LanguagePack.PanelCommandDescription,
+            type: "string",
+            states: {
+                "ARM_AWAY": "Arm Away",
+                "ARM_AWAY_INSTANT": "Arm Away (Instant)",
+                "ARM_STAY": "Arm Stay",
+                "DISARM": "Disarm",
+                "AUXILIARY": "Auxiliary Alarm",
+                "FIRE": "Fire Alarm",
+                "POLICE": "Police Alarm",
+                "NOP": "None"
+            },
+            role: "value",
+            read: false,
+            write: true,
+            def: "NOP"
+        }, { partition_id: partition.partition_id });
+
+        await this.createStateAsync("panel", id, "alarmState", {
+            name: LanguagePack.LastAlarmState,
+            desc: LanguagePack.LastAlarmStateDescription,
+            type: "string",
+            states: {
+                "AUXILIARY": "Auxiliary",
+                "FIRE": "Fire",
+                "POLICE": "Police",
+                "NONE": "None"
+            },
+            role: "indicator.alarm",
+            read: true,
+            write: false,
+            def: "NONE"
+        });
+
+        await this.createStateAsync("panel", id, "armDelay", {
+            name: LanguagePack.ArmingDelay,
+            desc: LanguagePack.ArmingDelayDescription,
+            type: "number",
+            min: 0,
+            unit: "sec",
+            role: "value.interval",
+            read: true,
+            write: true,
+            def: 60
+        });
+
+        await this.createStateAsync("panel", id, "armState", {
+            name: LanguagePack.ArmState,
+            desc: LanguagePack.ArmStateDescription,
+            type: "string",
+            states: {
+                "ARM-AWAY-EXIT-DELAY": "Exit Delay (Away)",
+                "ARM-AWAY-ENTRY-DELAY": "Entry Delay (Away)",
+                "ENTRY_DELAY": "Entry Delay",
+                "EXIT_DELAY": "Exit Delay",
+                "DISARM": "Disarmed",
+                "ARM_STAY": "Armed Stay",
+                "ARM_AWAY": "Armed Away"
+            },
+            role: "state",
+            read: true,
+            write: false,
+            def: "DISARM"
+        }, { partition_id: partition.partition_id });
+
+        await this.createStateAsync("panel", id, "secureArm", {
+            name: LanguagePack.RequirePin,
+            desc: LanguagePack.RequirePinDescription,
+            type: "boolean",
+            role: "state",
+            states: {
+                "true": "Enabled",
+                "false": "Disabled"
+            },
+            read: true,
+            write: false,
+            def: false
+        });
 
         // Subscribe to changes of panel partition command
         await this.subscribeStatesAsync(getPath("panel", id, "command"));
@@ -60,38 +129,14 @@ class QolsysPanel extends utils.Adapter {
      * @param role - The object role
      */
     private async createZoneObjects(zone: ZoneJson, role: string): Promise<void> {
-        const title = convertToTitleCase(zone.type);
+        const zoneTypeTitle = convertToTitleCase(zone.type);
         await this.createChannelAsync("zones", zone.id, { name: zone.name }, {
             zone_id: zone.zone_id,
             partition_id: zone.partition_id
         });
         await this.createStateAsync("zones", zone.id, "state", {
-            name: {
-                "en": `${zone.name} State`,
-                "de": `${zone.name} Staat`,
-                "ru": `${zone.name} Государство`,
-                "pt": `${zone.name} Estado`,
-                "nl": `${zone.name} Staats State`,
-                "fr": `${zone.name} État`,
-                "it": `${zone.name} Stato`,
-                "es": `${zone.name} Estado`,
-                "pl": `${zone.name} Państwo`,
-                "uk": `${zone.name} Стан`,
-                "zh-cn": "${zone.name} 国家"
-            },
-            desc: {
-                "en": `${title} Sensor`,
-                "de": `${title} Sensor`,
-                "ru": `${title} Сенсор`,
-                "pt": `${title} Sensor de sensor`,
-                "nl": `${title} Sensor`,
-                "fr": `${title} Senseur`,
-                "it": `${title} Sensore`,
-                "es": `${title} Sensor`,
-                "pl": `${title} Sensor`,
-                "uk": `${title} Страхування`,
-                "zh-cn": `${title} 许可证`
-            },
+            name: LanguagePack.State,
+            desc: zoneTypeTitle,
             type: "boolean",
             states: {
                 "true": "Open",
@@ -110,32 +155,8 @@ class QolsysPanel extends utils.Adapter {
             zone_physical_type: zone.zone_physical_type
         });
         await this.createStateAsync("zones", zone.id, "tamper", {
-            name: {
-                "en": `${zone.name} Tamper`,
-                "de": `${zone.name} Tamper`,
-                "ru": `${zone.name} Тампере`,
-                "pt": `${zone.name} Tampão`,
-                "nl": `${zone.name} Tamper`,
-                "fr": `${zone.name} Tamper`,
-                "it": `${zone.name} Ammortizzatore`,
-                "es": `${zone.name} Tamper`,
-                "pl": `${zone.name} Tamper`,
-                "uk": `${zone.name} Тампер`,
-                "zh-cn": `${zone.name} 坦佩尔`
-            },
-            desc: {
-                "en": `${title} Tamper State`,
-                "de": `${title} Mitgliedstaat`,
-                "ru": `${title} Тампере государство`,
-                "pt": `${title} Estado de Tampão`,
-                "nl": `${title} Tamper State`,
-                "fr": `${title} État de Tamper`,
-                "it": `${title} Tamper Stato`,
-                "es": `${title} Tamper State`,
-                "pl": `${title} Tamper`,
-                "uk": `${title} Тамперська держава`,
-                "zh-cn": `${title} 坦佩尔州`
-            },
+            name: LanguagePack.Tamper,
+            desc: zoneTypeTitle,
             type: "boolean",
             states: {
                 "true": "Tampered",
@@ -182,7 +203,7 @@ class QolsysPanel extends utils.Adapter {
         const id = `partition${alarm.partition_id + 1}`;
         this.log.info(`triggering ${alarm.alarm_type} alarm on ${id}`);
         await this.setStateChangedAsync(getPath("panel", id, "alarmState"), {
-            val: alarm.alarm_type, ack: true
+            val: alarm.alarm_type ?? "NONE", ack: true
         });
     }
 

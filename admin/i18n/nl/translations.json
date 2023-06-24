@@ -1,0 +1,13 @@
+{
+    "Hostname": "Hostnaam",
+    "Hostname or IP address of the Qolsys IQ panel": "Hostnaam of IP-adres van het Qolsys IQ paneel",
+    "Port Number": "Poortnummer",
+    "Port number of the Qolsys IQ panel (usually 12345)": "Poortnummer van het Qolsys IQ-paneel (meestal 12345)",
+    "Secure Token": "Veilig token",
+    "C4 Secure Token from the Qolsys IQ panel admin": "C4 Secure Token van de beheerder van het Qolsys IQ-paneel",
+    "Pin code to use when arming/disarming": "Pincode om te gebruiken bij in-/uitschakelen",
+    "User Pin Code": "Gebruiker pincode",
+    "Enable arming panel": "Inschakelpaneel inschakelen",
+    "Enable disarming panel": "Schakel het paneel uit",
+    "Enable triggering alarms": "Activeer alarmen"
+}

@@ -5,7 +5,7 @@ import * as tls from "tls";
 import { ActionType, AlarmType, ArmingStateType, InfoType } from "../enums";
 import { PayloadJson } from "../interfaces";
 
-const RECONNECT_INTERVAL = 5000; // Initial reconnect interval (5 seconds)
+const RECONNECT_INTERVAL = 10000; // Initial reconnect interval (10 seconds)
 const MAX_RECONNECT_INTERVAL = 60000; // Maximum reconnect interval (60 seconds)
 const PING_INTERVAL = 30000; // Ping interval (30 seconds)
 

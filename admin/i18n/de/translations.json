@@ -1,0 +1,13 @@
+{
+    "Hostname": "Hostname",
+    "Hostname or IP address of the Qolsys IQ panel": "Hostname oder IP-Adresse des Qolsys IQ-Panels",
+    "Port Number": "Port-Nummer",
+    "Port number of the Qolsys IQ panel (usually 12345)": "Portnummer des Qolsys IQ-Panels (normalerweise 12345)",
+    "Secure Token": "Sicheres Token",
+    "C4 Secure Token from the Qolsys IQ panel admin": "C4 Secure Token vom Qolsys IQ Panel-Administrator",
+    "Pin code to use when arming/disarming": "PIN-Code zur Verwendung beim Scharf-/Unscharfschalten",
+    "User Pin Code": "Benutzer-PIN-Code",
+    "Enable arming panel": "Aktivieren Sie das Scharfschaltfeld",
+    "Enable disarming panel": "Deaktivierungspanel aktivieren",
+    "Enable triggering alarms": "Auslösende Alarme aktivieren"
+}

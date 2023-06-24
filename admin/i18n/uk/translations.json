@@ -1,0 +1,13 @@
+{
+    "Hostname": "Ім'я хоста",
+    "Hostname or IP address of the Qolsys IQ panel": "Ім’я хоста або IP-адреса панелі Qolsys IQ",
+    "Port Number": "Номер порту",
+    "Port number of the Qolsys IQ panel (usually 12345)": "Номер порту панелі Qolsys IQ (зазвичай 12345)",
+    "Secure Token": "Безпечний маркер",
+    "C4 Secure Token from the Qolsys IQ panel admin": "C4 Secure Token від адміністратора панелі Qolsys IQ",
+    "Pin code to use when arming/disarming": "PIN-код для використання під час постановки/зняття з охорони",
+    "User Pin Code": "PIN-код користувача",
+    "Enable arming panel": "Увімкнути панель охорони",
+    "Enable disarming panel": "Увімкнути панель зняття з охорони",
+    "Enable triggering alarms": "Увімкнути тривогу"
+}
