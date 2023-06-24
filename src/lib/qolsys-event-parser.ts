@@ -1,0 +1,297 @@
+import { EventEmitter } from "events";
+import { EventType, InfoType, ZoneEventType } from "../enums";
+import { AlarmJson, ArmingJson, ErrorJson, PartitionJson, PayloadJson, ZoneJson } from "../interfaces";
+import { CountdownTimer } from "./countdown-timer";
+
+/**
+ * Qolsys Panel Event Parser.
+ */
+export class QolsysEventParser extends EventEmitter {
+    countdown = new CountdownTimer<ArmingJson>();
+    private log: ioBroker.Logger;
+
+    /**
+     * Event parser constructor.
+     *
+     * @param {ioBroker.Logger} logger - Adapter logger.
+     *
+     * @emits alarm - Emits an event with an alarm type {AlarmType} payload.
+     * @emits arming - Emits an event with an arming type {ArmingType} payload.
+     * @emits error - Emits an event with a string describing the error.
+     * @emits partition - Emits an event with a partition {PartitionJson} payload.
+     * @emits secureArm - Emits an event with a secure arming payload.
+     * @emits zone - Emits an event with a zone {ZoneJson} payload.
+     */
+    constructor(logger: ioBroker.Logger) {
+        super({ captureRejections: true });
+        this.log = logger;
+        this.countdown.on("countdown", this.onCountdown.bind(this));
+        this.countdown.on("stopped", this.onCountdownStopped.bind(this));
+    }
+
+    // List of partitions
+    private _partitions: PartitionJson[] = [];
+
+    /**
+     * Get the list of partitions
+     *
+     * @return {PartitionJson[]}
+     */
+    public get partitions(): readonly PartitionJson[] {
+        return this._partitions;
+    }
+
+    /**
+     * Check if a partition is faulted by checking any zones report "Open"
+     * @param partitionId The ID of the partition (zero based)
+     * @return {boolean} True if the partition is secure, undefined if partition does not exist
+     */
+    public isFaulted(partitionId: number): boolean | undefined {
+        const partition = this.partitions.find(partition => partition.partition_id === partitionId);
+        return partition?.zone_list.some((zone) => zone.status === "Open");
+    }
+
+    /**
+     * Parses an event payload and emits events based on the event type and associated information.
+     * Currently handles event types: INFO, ZONE, ARMING, ALARM, ERROR. Any unrecognized event type is logged as a warning.
+     *
+     * @param {PayloadJson} payload - The event payload to parse.
+     */
+    public parseEventPayload(payload: PayloadJson): void {
+        switch (payload.event) {
+            case EventType.INFO:
+                this.handleInfoEvent(payload);
+                break;
+
+            case EventType.ZONE:
+                this.handleZone(payload);
+                break;
+
+            case EventType.ARMING:
+                this.handleArmingEvent(payload);
+                break;
+
+            case EventType.ALARM:
+                this.handleAlarmEvent(payload);
+                break;
+
+            case EventType.ERROR:
+                this.handleErrorEvent(payload);
+                break;
+
+            default:
+                this.log.warn("unknown event type: " + JSON.stringify(payload));
+                break;
+        }
+    }
+
+    private handleAlarmEvent(payload: PayloadJson): void {
+        if (payload.alarm_type != null && payload.partition_id != null) {
+            const event: AlarmJson = {
+                alarm_type: payload.alarm_type,
+                partition_id: payload.partition_id
+            };
+            this.emit("alarm", event);
+        }
+    }
+
+    private handleArmingEvent(payload: PayloadJson): void {
+        if (payload.arming_type != null && payload.partition_id != null) {
+            const event: ArmingJson = {
+                arming_type: payload.arming_type,
+                partition_id: payload.partition_id,
+                delay: payload.delay
+            };
+            if (event.delay != null) {
+                this.countdown.start(event.delay, event);
+                return;
+            } else if (this.countdown.isRunning) {
+                this.countdown.stop();
+            }
+            this.emit("arming", event);
+        } else {
+            this.log.warn("unknown ARMING event: " + JSON.stringify(payload));
+        }
+    }
+
+    private handleErrorEvent(payload: PayloadJson): void {
+        if (payload.error_type != null && payload.description != null && payload.partition_id != null) {
+            const event: ErrorJson = {
+                description: payload.description,
+                error_type: payload.error_type,
+                partition_id: payload.partition_id
+            }
+            this.emit("error", event);
+        } else {
+            this.log.warn("unknown ERROR event: " + JSON.stringify(payload));
+        }
+    }
+
+    private handleInfoEvent(payload: PayloadJson): void {
+        switch (payload.info_type) {
+            case InfoType.SUMMARY:
+                this.handleSummaryInfo(payload);
+                break;
+
+            case InfoType.SECURE_ARM:
+                this.handleSecureArmInfo(payload);
+                break;
+
+            default:
+                this.log.warn("unknown INFO type: " + payload.info_type);
+                break;
+        }
+    }
+
+    /**
+     * Parse an array of PartitionJson objects, emitting 'partition' and 'zone' events.
+     * Only zones with a zone_alarm_type greater than 0 are considered valid and emitted.
+     *
+     * @param {PartitionJson[]} partitions - An array of PartitionJson objects to parse.
+     *
+     * @emits partition - Emits an event with a {PartitionJson} object.
+     * @emits zone - Emits an event with a {ZoneJson} object.
+     */
+    private handlePartitionInfo(partitions: PartitionJson[]): void {
+        // emit all partition events
+        partitions.forEach((partition) => {
+            this.emit("partition", partition);
+        });
+
+        // emit all zone events
+        partitions.forEach((partition) => {
+            partition.zone_list.forEach((zone) => {
+                this.emit("zone", zone, "info");
+            })
+        });
+    }
+
+    private handleSecureArmInfo(payload: PayloadJson): void {
+        if (typeof payload.value === "boolean" && payload.partition_id) {
+            this.emit("secureArm", {
+                partition_id: payload.partition_id,
+                secureArm: payload.value
+            });
+        } else {
+            this.log.warn("unknown secureArm event: " + JSON.stringify(payload));
+        }
+    }
+
+    private handleSummaryInfo(payload: PayloadJson): void {
+        this.log.debug("summary: " + JSON.stringify(payload));
+        if (payload.partition_list) {
+            this._partitions = payload.partition_list;
+            this.handlePartitionInfo(payload.partition_list);
+        } else {
+            this.log.warn("unknown partition event: " + JSON.stringify(payload));
+        }
+    }
+
+    /**
+     * Handle a zone event.
+     *
+     * @param payload The zone event payload
+     */
+    private handleZone(payload: PayloadJson): void {
+        if (payload.zone) {
+            switch (payload.zone_event_type) {
+                case ZoneEventType.ZONE_ACTIVE:
+                    this.handleZoneActive(payload.zone);
+                    break;
+
+                case ZoneEventType.ZONE_ADD:
+                case ZoneEventType.ZONE_UPDATE:
+                    this.handleZoneUpdate(payload.zone);
+                    break;
+
+                case ZoneEventType.ZONE_DELETE:
+                    this.handleZoneDelete(payload.zone);
+                    break;
+
+                default:
+                    this.log.warn("unknown zone event type: " + JSON.stringify(payload));
+                    break;
+            }
+        }
+    }
+
+    /**
+     * Invoked when a zone is active.
+     * Locates and updates the matching partition zone detail and emits a complete 'zone' event.
+     *
+     * @param zone The zone object
+     *
+     * @emits zone - Emits an event with a {ZoneJson} object
+     */
+    private handleZoneActive(zone: ZoneJson): void {
+        this.log.debug("zone active: " + JSON.stringify(zone));
+        if (!this._partitions.some((partition) => {
+            return partition.zone_list.some((z) => {
+                if (z.zone_id === zone.zone_id) {
+                    this.emit("zone", Object.assign(z, zone), "active");
+                    return true;
+                }
+                return false;
+            })
+        })) {
+            this.log.warn("zone not found: " + JSON.stringify(zone));
+        }
+    }
+
+    /**
+     * Invoked when a zone is deleted.
+     *
+     * @param zone The zone object
+     *
+     * @emits zone - Emits an event with a {ZoneJson} object
+     */
+    private handleZoneDelete(zone: ZoneJson): void {
+        this.log.debug("zone delete: " + JSON.stringify(zone));
+        if (!this._partitions.some((partition) => {
+            return partition.zone_list.some((z) => {
+                if (z.zone_id === zone.zone_id) {
+                    this.emit("zone", z, "delete");
+                    return true;
+                }
+                return false;
+            })
+        })) {
+            this.log.warn("zone not found: " + JSON.stringify(zone));
+        }
+    }
+
+    /**
+     * Invoked when a zone is updated or added.
+     * Locates and updates any matching partition zone detail or adds a new one
+     * and emits a complete 'zone' event.
+     *
+     * @param zone The zone object
+     *
+     * @emits zone - Emits an event with a {ZoneJson} object
+     */
+    private handleZoneUpdate(zone: ZoneJson): void {
+        this.log.debug("zone update: " + JSON.stringify(zone));
+        const partition = this._partitions.find(p => p.partition_id === zone.partition_id);
+        if (partition !== undefined) {
+            const idx = partition.zone_list.findIndex((z) => z.zone_id === zone.zone_id);
+            if (idx === -1) {
+                partition.zone_list.push(zone);
+            } else {
+                partition.zone_list[idx] = zone;
+            }
+        }
+        this.emit("zone", zone, "update");
+    }
+
+    private onCountdown(seconds: number, payload: ArmingJson): void {
+        this.emit("arming", {
+            arming_type: payload.arming_type,
+            partition_id: payload.partition_id,
+            delay: seconds || payload.delay
+        });
+    }
+
+    private onCountdownStopped(payload: ArmingJson): void {
+        this.emit("arming", payload);
+    }
+}
