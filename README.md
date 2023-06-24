@@ -31,31 +31,31 @@ This plugin only supports the IQ Panel basic security features:
 
 ## Supported Sensors
 
-| Sensor                      | Role                        | Notes              |
-|-----------------------------|-----------------------------|--------------------|
-| MOTION                      | sensor.motion               |                    |
-| OCCUPANCY_SENSOR            | sensor.motion               |                    |
-| PANEL_MOTION                | sensor.motion               |                    |
-| BREAKAGE                    | sensor.noise                |                    |
-| GLASSBREAK                  | sensor.noise                |                    |
-| PANEL_GLASS_BREAK           | sensor.noise                |                    |
-| SHOCK                       | sensor.noise                |                    |
-| SHOCK_OTHERS                | sensor.noise                |                    |
-| SHOCK_SENSOR_MULTI_FUNCTION | sensor.noise                |                    |
-| SMOKE_HEAT                  | sensor.alarm.fire           |                    |
-| SMOKE_MULTI_FUNCTION        | sensor.alarm.fire           |                    |
-| CONTACT                     | sensor.contact.window\|door | Will use door by   |
-| CONTACT_MULTI_FUNCTION      | sensor.contact.window\|door | default unless     |
-| TAKEOVER_MODULE             | sensor.contact.window\|door | window is found in |
-| WIRED_SENSOR                | sensor.contact.window\|door | the name.          |
-| WATER                       | sensor.alarm.flood          |                    |
-| WATER_IQ_FLOOD              | sensor.alarm.flood          |                    |
-| WATER_OTHER_FLOOD           | sensor.alarm.flood          |                    |
-| CARBON_MONOXIDE             | sensor.alarm                |                    |
-| FREEZE                      | sensor.alarm                |                    |
-| RF_KEYPAD                   | sensor.alarm                |                    |
-| TEMPERATURE                 | sensor.alarm                |                    |
-| TEMPERATURE_MULTI_FUNCTION  | sensor.alarm                |                    |
+| Sensor                      | Role                        |
+|-----------------------------|-----------------------------|
+| MOTION                      | sensor.motion               |
+| OCCUPANCY_SENSOR            | sensor.motion               |
+| PANEL_MOTION                | sensor.motion               |
+| BREAKAGE                    | sensor.noise                |
+| GLASSBREAK                  | sensor.noise                |
+| PANEL_GLASS_BREAK           | sensor.noise                |
+| SHOCK                       | sensor.noise                |
+| SHOCK_OTHERS                | sensor.noise                |
+| SHOCK_SENSOR_MULTI_FUNCTION | sensor.noise                |
+| SMOKE_HEAT                  | sensor.alarm.fire           |
+| SMOKE_MULTI_FUNCTION        | sensor.alarm.fire           |
+| CONTACT                     | sensor.contact.window\|door |
+| CONTACT_MULTI_FUNCTION      | sensor.contact.window\|door |
+| TAKEOVER_MODULE             | sensor.contact.window\|door |
+| WIRED_SENSOR                | sensor.contact.window\|door |
+| WATER                       | sensor.alarm.flood          |
+| WATER_IQ_FLOOD              | sensor.alarm.flood          |
+| WATER_OTHER_FLOOD           | sensor.alarm.flood          |
+| CARBON_MONOXIDE             | sensor.alarm                |
+| FREEZE                      | sensor.alarm                |
+| RF_KEYPAD                   | sensor.alarm                |
+| TEMPERATURE                 | sensor.alarm                |
+| TEMPERATURE_MULTI_FUNCTION  | sensor.alarm                |
 
 ## Qolsys Panel Configuration
 

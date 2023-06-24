@@ -1,9 +1,8 @@
 # Exclude dot-directories by default
 .*/
 !.github/
-!.eslintrc.js
-!.eslintignore
-!.releaseconfig.json
+
+.nosync
 
 *.code-workspace
 node_modules
@@ -13,6 +12,7 @@ nbproject
 iobroker.*.tgz
 
 Thumbs.db
+.DS_Store
 
 # i18n intermediate files
 admin/i18n/flat.txt
