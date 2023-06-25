@@ -92,8 +92,7 @@ Existing codes will have 00 appended to them.
 - [Hubitat QolSysIQPanel plugin (dcaton)](https://github.com/dcaton/Hubitat/tree/main/QolSysIQPanel)
 
 ## Changelog
-
-### **WORK IN PROGRESS**
+### 0.0.3-alpha.0 (2023-06-25)
 
 Cleaned up code and added support for zone deletions
 
