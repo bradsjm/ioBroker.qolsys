@@ -95,6 +95,8 @@ Existing codes will have 00 appended to them.
 
 ### **WORK IN PROGRESS**
 
+Cleaned up code and added support for zone deletions
+
 ### 0.0.2-alpha.0 (2023-06-24)
 
 * Testing
