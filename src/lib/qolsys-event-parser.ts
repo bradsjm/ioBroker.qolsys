@@ -239,25 +239,27 @@ export class QolsysEventParser extends EventEmitter {
     }
 
     /**
-     * Invoked when a zone is deleted.
+     * Invoked when a zone is deleted to remove the matching partition zone detail.
      *
      * @param zone The zone object
      *
-     * @emits zone - Emits an event with a {ZoneJson} object
+     * @emits zone - If the zone was found, emits a delete event with a {ZoneJson} object
      */
     private handleZoneDelete(zone: ZoneJson): void {
         this.log.debug("zone delete: " + JSON.stringify(zone));
-        if (!this._partitions.some((partition) => {
-            return partition.zone_list.some((z) => {
-                if (z.zone_id === zone.zone_id) {
-                    this.emit("zone", z, "delete");
-                    return true;
-                }
-                return false;
-            })
-        })) {
-            this.log.warn("zone not found: " + JSON.stringify(zone));
-        }
+        this._partitions = this._partitions.map((partition) => {
+            const updatedPartition = { ...partition }; // Copy the partition object to avoid mutation
+            updatedPartition.zone_list = updatedPartition.zone_list.filter((z) => z.zone_id !== zone.zone_id);
+
+            // If zone was removed, emit 'delete' event
+            if (updatedPartition.zone_list.length < partition.zone_list.length) {
+                this.emit("zone", zone, "delete");
+            } else {
+                this.log.debug("unable to delete zone: " + JSON.stringify(zone));
+            }
+
+            return updatedPartition;
+        });
     }
 
     /**

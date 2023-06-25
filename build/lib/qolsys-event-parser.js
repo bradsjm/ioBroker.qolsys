@@ -178,17 +178,16 @@ class QolsysEventParser extends import_events.EventEmitter {
   }
   handleZoneDelete(zone) {
     this.log.debug("zone delete: " + JSON.stringify(zone));
-    if (!this._partitions.some((partition) => {
-      return partition.zone_list.some((z) => {
-        if (z.zone_id === zone.zone_id) {
-          this.emit("zone", z, "delete");
-          return true;
-        }
-        return false;
-      });
-    })) {
-      this.log.warn("zone not found: " + JSON.stringify(zone));
-    }
+    this._partitions = this._partitions.map((partition) => {
+      const updatedPartition = { ...partition };
+      updatedPartition.zone_list = updatedPartition.zone_list.filter((z) => z.zone_id !== zone.zone_id);
+      if (updatedPartition.zone_list.length < partition.zone_list.length) {
+        this.emit("zone", zone, "delete");
+      } else {
+        this.log.debug("unable to delete zone: " + JSON.stringify(zone));
+      }
+      return updatedPartition;
+    });
   }
   handleZoneUpdate(zone) {
     this.log.debug("zone update: " + JSON.stringify(zone));

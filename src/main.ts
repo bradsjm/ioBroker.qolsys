@@ -348,19 +348,21 @@ class QolsysPanel extends utils.Adapter {
             return
         }
 
+        const stateId = `zones.${zone.id}`;
+
+        // Handle delete operations
         if (event === "delete") {
-            // Not currently implemented
-            this.log.info(`zone ${zone.id} delete not currently implemented`);
+            this.log.info(`removing zone ${zone.id} (${zone.name})`);
+            await this.deleteStateAsync(stateId);
             return
         }
 
+        // Create or update zone object
         await this.createZoneObjects(zone, role);
-        const stateId = `zones.${zone.id}`;
-
         this.log.debug(`setting zone #${zone.zone_id} (${zone.name}) to ${zone.status}`);
-        const isOpen = zone.status === "Open";
 
         // Set the zone state
+        const isOpen = zone.status === "Open";
         await this.setStateChangedAsync(stateId, { val: isOpen, ack: true });
 
         // Update the partition secure state

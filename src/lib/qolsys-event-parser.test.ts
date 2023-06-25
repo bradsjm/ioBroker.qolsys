@@ -32,6 +32,7 @@ Fields:
 import { assert, expect } from "chai";
 import { AlarmType, ArmingStateType, EventType, InfoType, ZoneEventType } from "../enums";
 import { QolsysEventParser } from "./qolsys-event-parser";
+import { PartitionJson, PayloadJson, ZoneJson } from "../interfaces";
 
 /* eslint-disable @typescript-eslint/no-empty-function */
 describe("QolsysEventParser", () => {
@@ -200,5 +201,44 @@ describe("QolsysEventParser", () => {
         });
         parser.parseEventPayload(payload);
         assert.strictEqual(alarmEventEmitted, true);
+    });
+
+    it("test_zone_delete", () => {
+        const parser = new QolsysEventParser(logger);
+        const zone: ZoneJson = {
+            group: "Test Group",
+            id: "Test ID",
+            name: "Test Zone",
+            partition_id: 1,
+            state: "Closed",
+            status: "Normal",
+            type: "Entry/Exit",
+            zone_alarm_type: 0,
+            zone_id: 1,
+            zone_physical_type: 0,
+            zone_type: 0
+        };
+        const partition: PartitionJson = {
+            name: "Test Partition",
+            partition_id: 1,
+            secure_arm: false,
+            status: ArmingStateType.DISARM,
+            zone_list: [ zone ]
+        };
+        parser["_partitions"] = [ partition ];
+        const payload: PayloadJson = {
+            event: EventType.ZONE,
+            zone_event_type: ZoneEventType.ZONE_DELETE,
+            zone
+        };
+        let eventEmitted = false;
+        parser.on("zone", (z) => {
+            eventEmitted = true;
+            expect(z).to.deep.equal(zone);
+        });
+
+        parser["handleZone"](payload);
+        expect(parser["_partitions"]).to.not.include(partition);
+        expect(eventEmitted).to.be.true;
     });
 });
