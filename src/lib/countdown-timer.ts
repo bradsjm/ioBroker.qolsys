@@ -7,109 +7,125 @@ export class CountdownTimer<T> extends EventEmitter {
     private intervalId?: NodeJS.Timeout;
 
     /**
-     * Constructor
+     * The constructor function for the CountdownTimer class.
+     *
+     * @return A new instance of the class
      */
-    constructor(countdownSeconds = 0) {
+    constructor() {
         super({ captureRejections: true });
-        this._countdownSeconds = countdownSeconds;
+        this._countdownSeconds = this._remainingTime = 0;
     }
 
     private _countdownSeconds: number;
 
+    /**
+     * Returns the original number of seconds set for the countdown.
+     *
+     * @return {number} Number of seconds set for the countdown.
+     */
     get countdownSeconds(): number {
         return this._countdownSeconds;
     }
 
     private _payload?: T;
 
+    /**
+     * Returns the payload of the action.
+     *
+     * @return The payload of the action
+     */
     get payload(): T | undefined {
         return this._payload;
     }
 
-    private _remainingTime?: number;
+    private _remainingTime: number;
 
-    get remainingTime(): number | undefined {
+    /**
+     * Returns the remaining time in seconds.
+     *
+     * @return {number} The remaining time if running.
+     */
+    get remainingTime(): number {
         return this._remainingTime;
     }
 
+    /**
+     * The isRunning function returns a boolean value indicating whether the timer is currently running.
+     *
+     * @return A boolean value that is true if the timer is running and false otherwise
+     */
     public get isRunning(): boolean {
         return this.intervalId !== undefined;
     }
 
     /**
      * Pause the countdown timer if it is running.
+     *
      * @emits paused - Emits paused event if running
      */
     public pause(): void {
         if (this.intervalId) {
             clearInterval(this.intervalId);
             this.intervalId = undefined;
-            this._remainingTime = this._countdownSeconds;
             this.emit("paused", this._payload);
         }
     }
 
     /**
-     * Reset the countdown timer to its initial state.
-     */
-    public reset(): void {
-        this.stop();
-        this._countdownSeconds = 0;
-        this._payload = undefined;
-        this._remainingTime = undefined;
-    }
-
-    /**
-     * Resume the countdown timer if it is paused.
+     * Resume the countdown timer if it is paused and there is remaining time.
+     *
      * @emits resumed - Emits resumed event if paused
      */
     public resume(): void {
-        if (!this.intervalId) {
+        if (!this.intervalId && this._remainingTime > 0) {
             this.intervalId = setInterval(this.countdown.bind(this), 1000);
             this.emit("resumed", this._payload);
         }
     }
 
     /**
-     * Start a countdown timer.
-     * @param seconds the number of seconds to count down from
-     * @param payload the payload to send with each event
-     * @emits countdown - Emits countdown event with the number of seconds remaining (including 0)
-     * @emits stopped - Emits stopped event if manually stopped
+     * Start a countdown timer from the specified number of seconds with optional payload.
+     *
+     * @param seconds {number} the number of seconds to count down
+     * @param payload the optional payload to send with each event
      */
     public start(seconds: number, payload?: T): void {
         if (this.intervalId) {
             clearInterval(this.intervalId);
         }
-        this._countdownSeconds = seconds;
+        this._remainingTime = this._countdownSeconds = seconds;
         if (payload) {
             this._payload = payload;
         }
+        this._remainingTime = this._countdownSeconds;
         this.intervalId = setInterval(this.countdown.bind(this), 1000);
     }
 
     /**
      * Stop the countdown timer if it is running.
+     *
      * @emits stopped - Emits stopped event if running
      */
     public stop(): void {
         if (this.intervalId) {
             clearInterval(this.intervalId);
             this.intervalId = undefined;
-            this._countdownSeconds = 0;
-            this._remainingTime = undefined;
             this.emit("stopped", this._payload);
         }
     }
 
     /**
-     * Private method for the countdown logic.
+     * The countdown function is called every second by the timer.
+     * It emits a countdown event with the remaining time and payload,
+     * and when it reaches 0, it emits a completed event with the payload.
+     *
+     * @emits countdown - Emits countdown event
+     * @emits completed - Emits completed event
      */
     private countdown(): void {
-        if (this._countdownSeconds >= 0) {
-            this.emit("countdown", this._countdownSeconds, this._payload);
-            this._countdownSeconds--;
-            this._remainingTime = this._countdownSeconds;
+        if (this._remainingTime >= 0) {
+            this.emit("countdown", this._remainingTime, this._payload);
+            this._remainingTime--;
         } else {
             this.stop();
             this.emit("completed", this._payload);

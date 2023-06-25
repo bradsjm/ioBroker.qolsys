@@ -96,23 +96,4 @@ describe("CountdownTimer", () => {
         timer.start(-5);
     });
 
-    // Tests that the countdown timer can be reset to initial state
-    it("test_reset_countdown", () => {
-        const timer = new CountdownTimer();
-        let stopped = false;
-        timer.on("stopped", () => {
-            stopped = true;
-            assert.isTrue(stopped);
-            timer.reset();
-            assert.isFalse(timer.isRunning);
-            assert.equal(timer.countdownSeconds, 0);
-            assert.isUndefined(timer.payload);
-            assert.isUndefined(timer.remainingTime);
-        });
-        timer.start(5);
-        setTimeout(() => {
-            timer.stop();
-        }, 2000);
-    });
-
 });
