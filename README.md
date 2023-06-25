@@ -92,6 +92,16 @@ Existing codes will have 00 appended to them.
 - [Hubitat QolSysIQPanel plugin (dcaton)](https://github.com/dcaton/Hubitat/tree/main/QolSysIQPanel)
 
 ## Changelog
+
+<!--
+    Placeholder for the next version (at the beginning of the line):
+    ### **WORK IN PROGRESS**
+-->
+
+### WORK IN PROGRESS
+
+Updated code comments and cleaned up the countdown class.
+
 ### 0.0.3-alpha.0 (2023-06-25)
 
 Cleaned up code and added support for zone deletions
@@ -103,6 +113,10 @@ Cleaned up code and added support for zone deletions
 ### 0.0.1 (2023-24-5)
 
 * Initial development
+
+## Adapter Class Diagram
+
+![](./docs/diagram.svg "Class Diagram")
 
 ## License
 
