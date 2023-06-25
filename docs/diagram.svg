@@ -34,8 +34,6 @@
                   fill="#000000">AlarmJson
             </text>
             <polyline fill="none" stroke="#000000" points="46.939,-406.1 123.5912,-406.1 "/>
-            <text text-anchor="middle" x="85.2651" y="-389.5" font-family="Times,serif" font-size="14.00"
-                  fill="#000000"></text>
         </g>
         <!-- AlarmType -->
         <g id="node3" class="node">
@@ -72,8 +70,6 @@
                   fill="#000000">ArmingJson
             </text>
             <polyline fill="none" stroke="#000000" points="979.0463,-406.1 1063.4839,-406.1 "/>
-            <text text-anchor="middle" x="1021.2651" y="-389.5" font-family="Times,serif" font-size="14.00"
-                  fill="#000000"></text>
         </g>
         <!-- ArmingStateType -->
         <g id="node5" class="node">
@@ -149,8 +145,6 @@
                   fill="#000000">ErrorJson
             </text>
             <polyline fill="none" stroke="#000000" points="853.0533,-406.1 923.4769,-406.1 "/>
-            <text text-anchor="middle" x="888.2651" y="-389.5" font-family="Times,serif" font-size="14.00"
-                  fill="#000000"></text>
         </g>
         <!-- EventType -->
         <g id="node8" class="node">
@@ -202,8 +196,6 @@
                   fill="#000000">PartitionJson
             </text>
             <polyline fill="none" stroke="#000000" points="712.7104,-247.3 801.8198,-247.3 "/>
-            <text text-anchor="middle" x="757.2651" y="-230.7" font-family="Times,serif" font-size="14.00"
-                  fill="#000000"></text>
         </g>
         <!-- PartitionJson&#45;&gt;ArmingStateType -->
         <g id="edge3" class="edge">
@@ -222,8 +214,6 @@
                   fill="#000000">ZoneJson
             </text>
             <polyline fill="none" stroke="#000000" points="769.4369,-75.7 839.0933,-75.7 "/>
-            <text text-anchor="middle" x="804.2651" y="-59.1" font-family="Times,serif" font-size="14.00"
-                  fill="#000000"></text>
         </g>
         <!-- PartitionJson&#45;&gt;ZoneJson -->
         <g id="edge4" class="edge">
@@ -242,8 +232,6 @@
                   fill="#000000">PayloadJson
             </text>
             <polyline fill="none" stroke="#000000" points="255.2693,-406.1 341.2609,-406.1 "/>
-            <text text-anchor="middle" x="298.2651" y="-389.5" font-family="Times,serif" font-size="14.00"
-                  fill="#000000"></text>
         </g>
         <!-- PayloadJson&#45;&gt;ActionType -->
         <g id="edge5" class="edge">
