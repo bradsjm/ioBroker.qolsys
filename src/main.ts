@@ -15,9 +15,11 @@ class QolsysPanel extends utils.Adapter {
     private panel?: QolsysPanelClient;
 
     /**
-     * Qolsys adapter constructor.
+     * The constructor function is called when the adapter instance is created.
      *
-     * @param {Partial<utils.AdapterOptions>} options - Adapter options.
+     * @param options: Adapter options
+     *
+     * @return An instance of the class
      */
     public constructor(options: Partial<utils.AdapterOptions> = {}) {
         super({
@@ -30,10 +32,27 @@ class QolsysPanel extends utils.Adapter {
     }
 
     /**
-     * Create partition objects if they do not exist and subscribe to state changes.
+     * The OnPanelError function is called when the panel has an error.
      *
-     * @param id - The ID of the partition object
-     * @param partition - The partition object
+     * @param error: ErrorJson {ErrorJson} The panel error.
+     */
+    private async OnPanelError(error: ErrorJson): Promise<void> {
+        const errorType = convertToTitleCase(error.error_type.toLowerCase())
+        const value = (`${errorType}: ${error.description} (Partition ${error.partition_id + 1}) `);
+        this.log.error(value);
+        await this.setStateChangedAsync("panel.lastError", { val: value, ack: true });
+    }
+
+    /**
+     * The createPartitionObjects function creates the following objects for each partition:
+     * - Channel &quot;panel&quot; with name of partition
+     * - State &quot;command&quot; with role value and writeable, defaulting to NOP (no operation)
+     * - State &quot;alarmState&quot; with role indicator.alarm and read-only, defaulting to NONE (no alarm)
+     * - State &quot;armDelay&quot; with role value.interval and read/write, defaulting to 60 seconds
+     *   (the time between arming a panel in Away mode and when it becomes armed)
+     *
+     * @param id: {string} Object Identifier
+     * @param partition: {PartitionJson} Create the states for the partition
      */
     private async createPartitionObjects(id: string, partition: PartitionJson): Promise<void> {
         await this.createChannelAsync("panel", id, { name: partition.name });
@@ -123,10 +142,10 @@ class QolsysPanel extends utils.Adapter {
     }
 
     /**
-     * Create zone objects if they do not exist.
+     * The createZoneObjects function creates the zone objects for each zone in the system.
      *
-     * @param zone - The {ZoneJson} of the partition object
-     * @param role - The object role
+     * @param zone: {ZoneJson} Zone object to create
+     * @param role: {string} The role of the object
      */
     private async createZoneObjects(zone: ZoneJson, role: string): Promise<void> {
         const zoneTypeTitle = `${convertToTitleCase(zone.type)} (${zone.group})`;
@@ -156,9 +175,11 @@ class QolsysPanel extends utils.Adapter {
     }
 
     /**
-     * Retrieve arm state value or undefined if not set.
-     * @param partition_id the Partition ID
-     * @return the arm state value or undefined
+     * The getPartitionArmState function returns the armState of a partition.
+     *
+     * @param partition_id: {number} The partition to query
+     *
+     * @return {string|undefined} The arm state of the partition
      */
     private async getPartitionArmState(partition_id: number): Promise<string | undefined> {
         const id = `partition${partition_id + 1}`;
@@ -168,9 +189,11 @@ class QolsysPanel extends utils.Adapter {
     }
 
     /**
-     * Retrieve arming delay value or undefined if not set.
-     * @param partition_id the Partition ID
-     * @return the arming delay value or undefined
+     * The getPartitionarmDelay function returns the arm delay for a given partition.
+     *
+     * @param partition_id: {number} The partition to query
+     *
+     * @return {number|undefined} The arm delay of the partition
      */
     private async getPartitionarmDelay(partition_id: number): Promise<number | undefined> {
         const id = `partition${partition_id + 1}`;
@@ -180,9 +203,10 @@ class QolsysPanel extends utils.Adapter {
     }
 
     /**
-     * Asynchronously invoked when panel alarm event is received.
+     * The onAlarm function is called when the alarm state of a partition changes.
+     * It updates the corresponding ioBroker state with the new alarm type.
      *
-     * @param {AlarmJson} alarm - Alarm type
+     * @param alarm: AlarmJson Get the partition_id of the alarm
      */
     private async onAlarm(alarm: AlarmJson): Promise<void> {
         const id = `partition${alarm.partition_id + 1}`;
@@ -193,9 +217,10 @@ class QolsysPanel extends utils.Adapter {
     }
 
     /**
-     * Asynchronously invoked when panel arming event is received.
+     * The onArmingChange function is called when the arming state of a partition changes.
+     * It updates the armState and armDelay states for that partition.
      *
-     * @param {ArmingJson} arming - Arming event
+     * @param arming: {ArmingJson} Get the arming state of the partition
      */
     private async onArmingChange(arming: ArmingJson): Promise<void> {
         const id = `partition${arming.partition_id + 1}`;
@@ -212,10 +237,10 @@ class QolsysPanel extends utils.Adapter {
     }
 
     /**
-     * Handles changes in to command state.
+     * The onCommand function is called when a command is received from ioBroker
      *
-     * @param {number} partition_id - The numerical ID of the partition.
-     * @param {any} value - The value of the command.
+     * @param partition_id: {number} Determine which partition to arm or disarm
+     * @param value: {string} Determine what action to take
      */
     private async onCommand(partition_id: number, value: string): Promise<void> {
         const panel = this.panel;
@@ -266,34 +291,37 @@ class QolsysPanel extends utils.Adapter {
     }
 
     /**
-     * Asynchronously invoked when the panel is connected
+     * The onPanelConnect function is called when the panel connects.
+     * It sets the online status of this adapter to true and requests a summary from
+     * the panel.
      */
     private async onPanelConnect(): Promise<void> {
         await this.setOnlineStatus(true);
         await this.panel?.requestSummary();
     }
 
-    // When the connection is closed, set connection state to false
+    /**
+     * The onPanelDisconnect function is called when the panel is disconnected.
+     * This function sets the online status to false.
+     */
     private async onPanelDisconnect(): Promise<void> {
         await this.setOnlineStatus(false);
     }
 
-    // Log and update connection errors
+    /**
+     * The onPanelError function is called when the panel encounters an error.
+     * It logs and sets the lastError status to the error.
+     *
+     * @param error: Error {Error} to log
+     */
     private async onPanelError(error: Error): Promise<void> {
         this.log.error(error.message);
         await this.setStateChangedAsync("panel.lastError", { val: error.message, ack: true });
     }
 
-    // Log and update partition errors
-    private async onPartitionError(error: ErrorJson): Promise<void> {
-        const errorType = convertToTitleCase(error.error_type.toLowerCase())
-        const value = (`${errorType}: ${error.description} (Partition ${error.partition_id + 1}) `);
-        this.log.error(value);
-        await this.setStateChangedAsync("panel.lastError", { val: value, ack: true });
-    }
-
     /**
-     * Asynchronously invoked when the adapter is ready to start and connect to panel.
+     * The onReady function is called when the adapter instance has been successfully created.
+     * It is used to initialize the adapter instance (e.g., variables, functions, states).
      */
     private async onReady(): Promise<void> {
         // Reset the connection indicator to false
@@ -309,8 +337,8 @@ class QolsysPanel extends utils.Adapter {
         this.eventParser = new QolsysEventParser(this.log);
         this.eventParser.on("arming", this.onArmingChange.bind(this));
         this.eventParser.on("alarm", this.onAlarm.bind(this));
-        this.eventParser.on("error", this.onPartitionError.bind(this));
-        this.eventParser.on("partition", this.onReceivedPartition.bind(this));
+        this.eventParser.on("error", this.OnPanelError.bind(this));
+        this.eventParser.on("partition", this.onReceivePartition.bind(this));
         this.eventParser.on("secureArm", this.onSecureArmChange.bind(this));
         this.eventParser.on("zone", this.onReceivedZone.bind(this));
 
@@ -326,10 +354,14 @@ class QolsysPanel extends utils.Adapter {
     }
 
     /**
-     * Creates a partition if it does not exist.
-     * Sets the initial status and secure arm state of the partition.
+     * The onReceivePartition function is called when the partition object receives a new partition from the alarm panel.
+     * It creates all of the objects for that partition, and then calls onArmingChange and onSecureArmChange to update
+     * those values.  The id variable is used to create unique names for each object in ioBroker.  For example, if you have
+     * two partitions in your alarm system, they will be named &quot;partition2&quot; and &quot;partition3&quot;.  This function also logs a debug message with information about which partition was received by ioBroker.
+     *
+     * @param partition: {PartitionJson} Partition to create objects for.
      */
-    private async onReceivedPartition(partition: PartitionJson): Promise<void> {
+    private async onReceivePartition(partition: PartitionJson): Promise<void> {
         this.log.debug(`received partition #${partition.partition_id} (${partition.name})`);
         const id = `partition${partition.partition_id + 1}`;
         await this.createPartitionObjects(id, partition);
@@ -338,9 +370,11 @@ class QolsysPanel extends utils.Adapter {
     }
 
     /**
-     * Parses and creates a zone within a partition. Sets the initial status of the zone.
-     * @param {ZoneJson} zone - An object containing information about the zone.
-     * @param {string} event - The event (info, active, update) that occurred.
+     * The onReceivedZone function is called when a zone state change event is received from the panel.
+     * It updates the state of the zone in ioBroker and also updates the partition fault state if necessary.
+     *
+     * @param zone: {ZoneJson} The zone object from the panel.
+     * @param event: {string} The operation (update, add, delete)
      */
     private async onReceivedZone(zone: ZoneJson, event: string): Promise<void> {
         const role = getZoneRole(zone);
@@ -369,9 +403,12 @@ class QolsysPanel extends utils.Adapter {
         await this.updatePartitionFaultState(zone.partition_id);
     }
 
+
     /**
-     * Updates secure arm state of a partition
-     * @param partition the partition
+     * The onSecureArmChange function is called when the secure arm state of a partition changes.
+     * It updates the corresponding Secure Arm state object in ioBroker with the new value.
+     *
+     * @param partition: {PartitionJson} The partition object from the panel.
      */
     private async onSecureArmChange(partition: PartitionJson): Promise<void> {
         const id = `partition${partition.partition_id + 1}`;
@@ -400,7 +437,10 @@ class QolsysPanel extends utils.Adapter {
     }
 
     /**
-     * Invoked when the adapter is unloaded.
+     * The onUnload function is called when the adapter is deactivated.
+     * It removes all listeners and disconnects from the panel.
+     *
+     * @param callback: () Tell the adapter that it is safe to shut down
      */
     private onUnload(callback: () => void): void {
         try {
@@ -417,17 +457,18 @@ class QolsysPanel extends utils.Adapter {
     }
 
     /**
-     * Set the online status
+     * The setOnlineStatus function sets the online status of the adapter.
      *
-     * @param online - The new online status
+     * @param online: boolean Set the state of the adapter to true or false
      */
     private async setOnlineStatus(online: boolean): Promise<void> {
         await this.setStateAsync("info.connection", { val: online, ack: true });
     }
 
     /**
-     * Updates the tracked fault state of a partition
-     * @param partitionId - The partition ID to update
+     * The updatePartitionFaultState function updates the state of a partition's faulted status.
+     *
+     * @param partitionId: {number} Identify which partition is being updated
      */
     private async updatePartitionFaultState(partitionId: number): Promise<void> {
         await this.createStateAsync("panel", `partition${partitionId + 1}`, "isFaulted", {

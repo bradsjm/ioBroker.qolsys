@@ -13,14 +13,14 @@ export class QolsysEventParser extends EventEmitter {
     /**
      * Event parser constructor.
      *
-     * @param {ioBroker.Logger} logger - Adapter logger.
+     * @param {ioBroker.Logger} logger: Adapter logger.
      *
-     * @emits alarm - Emits an event with an alarm type {AlarmType} payload.
-     * @emits arming - Emits an event with an arming type {ArmingType} payload.
-     * @emits error - Emits an event with a string describing the error.
-     * @emits partition - Emits an event with a partition {PartitionJson} payload.
-     * @emits secureArm - Emits an event with a secure arming payload.
-     * @emits zone - Emits an event with a zone {ZoneJson} payload.
+     * @emits alarm: Emits an event with an alarm type {AlarmType} payload.
+     * @emits arming: Emits an event with an arming type {ArmingType} payload.
+     * @emits error: Emits an event with a string describing the error.
+     * @emits partition: Emits an event with a partition {PartitionJson} payload.
+     * @emits secureArm: Emits an event with a secure arming payload.
+     * @emits zone: Emits an event with a zone {ZoneJson} payload.
      */
     constructor(logger: ioBroker.Logger) {
         super({ captureRejections: true });
@@ -33,9 +33,9 @@ export class QolsysEventParser extends EventEmitter {
     private _partitions: PartitionJson[] = [];
 
     /**
-     * Get the list of partitions
+     * Returns the list of partitions
      *
-     * @return {PartitionJson[]}
+     * @return {PartitionJson[]} List of partitions
      */
     public get partitions(): readonly PartitionJson[] {
         return this._partitions;
@@ -43,8 +43,9 @@ export class QolsysEventParser extends EventEmitter {
 
     /**
      * Check if a partition is faulted by checking any zones report "Open"
-     * @param partitionId The ID of the partition (zero based)
-     * @return {boolean} True if the partition is secure, undefined if partition does not exist
+     *
+     * @param {number} partitionId: The ID of the partition (zero based)
+     * @return {boolean|undefined} True if the partition is secure, undefined if partition does not exist
      */
     public isFaulted(partitionId: number): boolean | undefined {
         const partition = this.partitions.find(partition => partition.partition_id === partitionId);
@@ -53,9 +54,10 @@ export class QolsysEventParser extends EventEmitter {
 
     /**
      * Parses an event payload and emits events based on the event type and associated information.
-     * Currently handles event types: INFO, ZONE, ARMING, ALARM, ERROR. Any unrecognized event type is logged as a warning.
+     * Currently handles event types: INFO, ZONE, ARMING, ALARM, ERROR.
+     * Any unrecognized event type is logged as a warning.
      *
-     * @param {PayloadJson} payload - The event payload to parse.
+     * @param {PayloadJson} payload: The event payload to parse.
      */
     public parseEventPayload(payload: PayloadJson): void {
         switch (payload.event) {
@@ -85,6 +87,14 @@ export class QolsysEventParser extends EventEmitter {
         }
     }
 
+    /**
+     * The handleAlarmEvent function is called when the alarm event is received from the system.
+     * It emits an &quot;alarm&quot; event with a payload of type AlarmJson.
+     *
+     * @param payload: PayloadJson Pass the payload from the event to this function
+     *
+     * @emits alarm: Emits an event with an alarm type {AlarmJson} payload.
+     */
     private handleAlarmEvent(payload: PayloadJson): void {
         if (payload.alarm_type != null && payload.partition_id != null) {
             const event: AlarmJson = {
@@ -95,6 +105,16 @@ export class QolsysEventParser extends EventEmitter {
         }
     }
 
+    /**
+     * The handleArmingEvent function is called when the payload.event_type is &quot;ARMING&quot;.
+     * It checks if the arming_type and partition_id are not null, then it creates an ArmingJson object with those values.
+     * If there's a delay value in the payload, it starts a countdown using that value and passes in the event object as well.
+     * If there's no delay or if there was already a countdown running (which would be stopped), then this function emits an &quot;arming&quot; event with that event object as its argument.
+     *
+     * @param payload: PayloadJson Pass the payload from the event to this function
+     *
+     * @emits arming: Emits an event with an arming type {ArmingType} payload.
+     */
     private handleArmingEvent(payload: PayloadJson): void {
         if (payload.arming_type != null && payload.partition_id != null) {
             const event: ArmingJson = {
@@ -114,6 +134,14 @@ export class QolsysEventParser extends EventEmitter {
         }
     }
 
+    /**
+     * The handleErrorEvent function is called when the client receives an ERROR event from the system.
+     * The function emits a &quot;error&quot; event with an ErrorJson object as its payload.
+     *
+     * @param {PayloadJson} payload: The payload of the event
+     *
+     * @emits error: Emits an event with an error type {ErrorJson} payload.
+     */
     private handleErrorEvent(payload: PayloadJson): void {
         if (payload.error_type != null && payload.description != null && payload.partition_id != null) {
             const event: ErrorJson = {
@@ -127,6 +155,11 @@ export class QolsysEventParser extends EventEmitter {
         }
     }
 
+    /**
+     * The handleInfoEvent function handles the INFO event.
+     *
+     * @param {PayloadJson} payload: The payload of the message
+     */
     private handleInfoEvent(payload: PayloadJson): void {
         switch (payload.info_type) {
             case InfoType.SUMMARY:
@@ -144,13 +177,13 @@ export class QolsysEventParser extends EventEmitter {
     }
 
     /**
-     * Parse an array of PartitionJson objects, emitting 'partition' and 'zone' events.
-     * Only zones with a zone_alarm_type greater than 0 are considered valid and emitted.
+     * The handlePartitionInfo function is called when the system sends a partition event.
+     * It parses an array of PartitionJson objects, emitting 'partition' and 'zone' events.
      *
-     * @param {PartitionJson[]} partitions - An array of PartitionJson objects to parse.
+     * @param {PartitionJson[]} partitions: An array of PartitionJson objects to parse.
      *
-     * @emits partition - Emits an event with a {PartitionJson} object.
-     * @emits zone - Emits an event with a {ZoneJson} object.
+     * @emits partition: Emits an event with a {PartitionJson} object.
+     * @emits zone: Emits an event with a {ZoneJson} object.
      */
     private handlePartitionInfo(partitions: PartitionJson[]): void {
         // emit all partition events
@@ -166,6 +199,12 @@ export class QolsysEventParser extends EventEmitter {
         });
     }
 
+    /**
+     * The handleSecureArmInfo function is called when the system sends a secureArm event.
+     * The function emits an event with the partition_id and secureArm value from the payload.
+     *
+     * @param {PayloadJson} payload: The payload of the event
+     */
     private handleSecureArmInfo(payload: PayloadJson): void {
         if (typeof payload.value === "boolean" && payload.partition_id) {
             this.emit("secureArm", {
@@ -177,6 +216,12 @@ export class QolsysEventParser extends EventEmitter {
         }
     }
 
+    /**
+     * The handleSummaryInfo function is called when the client receives a summary event.
+     * The function parses the payload and updates the partitions array with new partition information.
+     *
+     * @param {PayloadJson} payload: The payload of the event
+     */
     private handleSummaryInfo(payload: PayloadJson): void {
         this.log.debug("summary: " + JSON.stringify(payload));
         if (payload.partition_list) {
@@ -188,9 +233,9 @@ export class QolsysEventParser extends EventEmitter {
     }
 
     /**
-     * Handle a zone event.
+     * The handleZone function is called when a zone event occurs.
      *
-     * @param payload The zone event payload
+     * @param {PayloadJson} payload: The payload of the event
      */
     private handleZone(payload: PayloadJson): void {
         if (payload.zone) {
@@ -216,46 +261,47 @@ export class QolsysEventParser extends EventEmitter {
     }
 
     /**
-     * Invoked when a zone is active.
-     * Locates and updates the matching partition zone detail and emits a complete 'zone' event.
+     * The handleZone function is called when a zone active event occurs.
+     * It locates and updates the matching partition zone detail and emits a complete 'zone' event.
      *
-     * @param zone The zone object
+     * @param {ZoneJson} payload: The zone object of the event.
      *
-     * @emits zone - Emits an event with a {ZoneJson} object
+     * @emits zone: Emits an event with a {ZoneJson} object
      */
-    private handleZoneActive(zone: ZoneJson): void {
-        this.log.debug("zone active: " + JSON.stringify(zone));
+    private handleZoneActive(payload: ZoneJson): void {
+        this.log.debug("zone active: " + JSON.stringify(payload));
         if (!this._partitions.some((partition) => {
-            return partition.zone_list.some((z) => {
-                if (z.zone_id === zone.zone_id) {
-                    this.emit("zone", Object.assign(z, zone), "active");
+            return partition.zone_list.some((zone) => {
+                if (zone.zone_id === payload.zone_id) {
+                    this.emit("zone", Object.assign(zone, payload), "active");
                     return true;
                 }
                 return false;
             })
         })) {
-            this.log.warn("zone not found: " + JSON.stringify(zone));
+            this.log.warn("zone not found: " + JSON.stringify(payload));
         }
     }
 
     /**
-     * Invoked when a zone is deleted to remove the matching partition zone detail.
+     * The handleZoneDelete function is called when a zone delete event occurs.
+     * Remove the matching partition zone and emits a complete 'zone' event.
      *
-     * @param zone The zone object
-     *
-     * @emits zone - If the zone was found, emits a delete event with a {ZoneJson} object
+     * @param {ZoneJson} payload: The zone object of the event.
+     * *
+     * @emits zone: If the zone was found, emits a delete event with a {ZoneJson} object
      */
-    private handleZoneDelete(zone: ZoneJson): void {
-        this.log.debug("zone delete: " + JSON.stringify(zone));
+    private handleZoneDelete(payload: ZoneJson): void {
+        this.log.debug("zone delete: " + JSON.stringify(payload));
         this._partitions = this._partitions.map((partition) => {
             const updatedPartition = { ...partition }; // Copy the partition object to avoid mutation
-            updatedPartition.zone_list = updatedPartition.zone_list.filter((z) => z.zone_id !== zone.zone_id);
+            updatedPartition.zone_list = updatedPartition.zone_list.filter((z) => z.zone_id !== payload.zone_id);
 
             // If zone was removed, emit 'delete' event
             if (updatedPartition.zone_list.length < partition.zone_list.length) {
-                this.emit("zone", zone, "delete");
+                this.emit("zone", payload, "delete");
             } else {
-                this.log.debug("unable to delete zone: " + JSON.stringify(zone));
+                this.log.debug("unable to delete zone: " + JSON.stringify(payload));
             }
 
             return updatedPartition;
@@ -263,28 +309,36 @@ export class QolsysEventParser extends EventEmitter {
     }
 
     /**
-     * Invoked when a zone is updated or added.
-     * Locates and updates any matching partition zone detail or adds a new one
+     * The handleZoneUpdate function is called when a zone update event occurs.
+     * It locates and updates any matching partition zone detail or adds a new one
      * and emits a complete 'zone' event.
      *
-     * @param zone The zone object
+     * @param {ZoneJson} payload: The zone object of the event
      *
-     * @emits zone - Emits an event with a {ZoneJson} object
+     * @emits zone: Emits an event with a {ZoneJson} object
      */
-    private handleZoneUpdate(zone: ZoneJson): void {
-        this.log.debug("zone update: " + JSON.stringify(zone));
-        const partition = this._partitions.find(p => p.partition_id === zone.partition_id);
+    private handleZoneUpdate(payload: ZoneJson): void {
+        this.log.debug("zone update: " + JSON.stringify(payload));
+        const partition = this._partitions.find(p => p.partition_id === payload.partition_id);
         if (partition !== undefined) {
-            const idx = partition.zone_list.findIndex((z) => z.zone_id === zone.zone_id);
+            const idx = partition.zone_list.findIndex((z) => z.zone_id === payload.zone_id);
             if (idx === -1) {
-                partition.zone_list.push(zone);
+                partition.zone_list.push(payload);
             } else {
-                partition.zone_list[idx] = zone;
+                partition.zone_list[idx] = payload;
             }
         }
-        this.emit("zone", zone, "update");
+        this.emit("zone", payload, "update");
     }
 
+    /**
+     * The onCountdown function is called when the countdown timer has been started.
+     * It emits an event to the client with a payload containing information about
+     * what type of arming is being performed, which partition it's for, and how many seconds are left in the delay.
+     *
+     * @param {number} seconds: Number of seconds left before the alarm is armed
+     * @param {ArmingJson} payload: The payload from the arming event to this function
+     */
     private onCountdown(seconds: number, payload: ArmingJson): void {
         this.emit("arming", {
             arming_type: payload.arming_type,
@@ -293,6 +347,14 @@ export class QolsysEventParser extends EventEmitter {
         });
     }
 
+    /**
+     * The onCountdownStopped function is called when the countdown has stopped or completed.
+     * It emits the original arming payload event.
+     *
+     * @param {ArmingJson} payload: The payload from the arming event
+     *
+     * @emits arming: Emits an event with a {ArmingJson} object
+     */
     private onCountdownStopped(payload: ArmingJson): void {
         this.emit("arming", payload);
     }

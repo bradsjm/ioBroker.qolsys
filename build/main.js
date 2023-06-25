@@ -46,13 +46,11 @@ class QolsysPanel extends utils.Adapter {
         "DISARM": "Disarm",
         "AUXILIARY": "Auxiliary Alarm",
         "FIRE": "Fire Alarm",
-        "POLICE": "Police Alarm",
-        "NOP": "None"
+        "POLICE": "Police Alarm"
       },
       role: "value",
       read: false,
-      write: true,
-      def: "NOP"
+      write: true
     }, { partition_id: partition.partition_id });
     await this.createStateAsync("panel", id, "alarmState", {
       name: import_language_pack.LanguagePack.LastAlarmState,
@@ -114,11 +112,17 @@ class QolsysPanel extends utils.Adapter {
     await this.subscribeStatesAsync((0, import_utils.getPath)("panel", id, "command"));
   }
   async createZoneObjects(zone, role) {
-    const zoneTypeTitle = `${(0, import_utils.convertToTitleCase)(zone.type)} (${zone.group})`;
-    await this.setObjectAsync(`zones.${zone.id}`, {
-      type: "state",
-      common: {
-        name: zone.name,
+    const zoneTypeTitle = (0, import_utils.convertToTitleCase)(zone.type);
+    await this.createChannelAsync("zones", zone.id, { name: zone.name }, {
+      zone_id: zone.zone_id,
+      partition_id: zone.partition_id
+    });
+    await this.createStateAsync(
+      "zones",
+      zone.id,
+      "state",
+      {
+        name: import_language_pack.LanguagePack.State,
         desc: zoneTypeTitle,
         type: "boolean",
         states: {
@@ -130,14 +134,33 @@ class QolsysPanel extends utils.Adapter {
         write: false,
         def: false
       },
-      native: {
+      {
         group: zone.group,
         partition_id: zone.partition_id,
         zone_alarm_type: zone.zone_alarm_type,
         zone_id: zone.zone_id,
         zone_physical_type: zone.zone_physical_type
       }
-    });
+    );
+    await this.createStateAsync(
+      "zones",
+      zone.id,
+      "tamper",
+      {
+        name: import_language_pack.LanguagePack.Tamper,
+        desc: zoneTypeTitle,
+        type: "boolean",
+        states: {
+          "true": "Tampered",
+          "false": "Normal"
+        },
+        role: "indicator.alarm",
+        read: true,
+        write: false,
+        def: false
+      },
+      { partition_id: zone.partition_id }
+    );
   }
   async getPartitionArmState(partition_id) {
     const id = `partition${partition_id + 1}`;
@@ -152,11 +175,10 @@ class QolsysPanel extends utils.Adapter {
     return typeof (delayState == null ? void 0 : delayState.val) === "number" ? delayState == null ? void 0 : delayState.val : void 0;
   }
   async onAlarm(alarm) {
-    var _a;
     const id = `partition${alarm.partition_id + 1}`;
     this.log.info(`triggering ${alarm.alarm_type} alarm on ${id}`);
     await this.setStateChangedAsync((0, import_utils.getPath)("panel", id, "alarmState"), {
-      val: (_a = alarm.alarm_type) != null ? _a : "NONE",
+      val: alarm.alarm_type,
       ack: true
     });
   }
@@ -263,13 +285,15 @@ class QolsysPanel extends utils.Adapter {
     if (!role) {
       return;
     }
-    const stateId = `zones.${zone.id}`;
     if (event === "delete") {
-      this.log.info(`removing zone ${zone.id} (${zone.name})`);
-      await this.deleteStateAsync(stateId);
+      this.log.info(`zone ${zone.id} delete not currently implemented`);
       return;
     }
     await this.createZoneObjects(zone, role);
+    const stateId = `zones.${zone.id}.state`;
+    if (event === "active") {
+      await this.updateZoneTamperState(zone);
+    }
     this.log.debug(`setting zone #${zone.zone_id} (${zone.name}) to ${zone.status}`);
     const isOpen = zone.status === "Open";
     await this.setStateChangedAsync(stateId, { val: isOpen, ack: true });
@@ -350,6 +374,20 @@ class QolsysPanel extends utils.Adapter {
         const id = `panel.partition${partitionId + 1}.isFaulted`;
         await this.setStateChangedAsync(id, { val: isFaulted, ack: true });
       }
+    }
+  }
+  async updateZoneTamperState(zone) {
+    const stateId = `zones.${zone.id}.state`;
+    const tamperId = `zones.${zone.id}.tamper`;
+    const isOpen = zone.status === "Open";
+    const currentState = await this.getStateAsync(stateId);
+    const tamperState = await this.getStateAsync(tamperId);
+    if (isOpen && (currentState == null ? void 0 : currentState.val)) {
+      this.log.debug(`tampering zone #${zone.zone_id} (${zone.name})`);
+      await this.setStateChangedAsync(tamperId, { val: true, ack: true });
+    } else if (!isOpen && (tamperState == null ? void 0 : tamperState.val)) {
+      this.log.debug(`not tampering zone #${zone.zone_id} (${zone.name})`);
+      await this.setStateChangedAsync(tamperId, { val: false, ack: true });
     }
   }
 }

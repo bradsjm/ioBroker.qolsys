@@ -54,6 +54,15 @@ export class QolsysPanelClient extends EventEmitter {
         }
     }
 
+    private _lastAck = 0;
+
+    /**
+     * Return the timestamp of the last received ACK or 0 if no ACK has been received
+     */
+    get lastAck(): number {
+        return this._lastAck;
+    }
+
     /**
      * Returns whether the panel is connected.
      *
@@ -281,6 +290,7 @@ export class QolsysPanelClient extends EventEmitter {
             if (line === "ACK") {
                 this.log.debug("received ACK");
                 this.emit("ack");
+                this._lastAck = Date.now();
                 continue;
             }
 
@@ -302,7 +312,7 @@ export class QolsysPanelClient extends EventEmitter {
      * Sends a no-op command to the panel in expectation of an ACK response.
      */
     private ping(): void {
-        if (!this.isConnected) {
+        if (!this.isConnected || Date.now() - this._lastAck > PING_INTERVAL * 2) {
             this.disconnect();
             return;
         }
