@@ -15,8 +15,8 @@ const PING_INTERVAL = 30000; // Ping interval (30 seconds)
 export class QolsysPanelClient extends EventEmitter {
     private buffer = "";
     private client?: tls.TLSSocket;
-    private config: ioBroker.AdapterConfig;
-    private log: ioBroker.Logger;
+    private readonly config: ioBroker.AdapterConfig;
+    private readonly log: ioBroker.Logger;
     private pingTimer?: NodeJS.Timeout;
     private reconnectInterval = RECONNECT_INTERVAL;
     private reconnectTimer?: NodeJS.Timeout;
@@ -28,7 +28,7 @@ export class QolsysPanelClient extends EventEmitter {
      * @param config the ioBroker configuration
      */
     constructor(logger: ioBroker.Logger, config: ioBroker.AdapterConfig) {
-        super({ captureRejections: true });
+        super();
         this.config = config;
         this.log = logger;
     }
@@ -181,8 +181,10 @@ export class QolsysPanelClient extends EventEmitter {
      * This will generate a close event.
      */
     public disconnect(): void {
-        clearTimeout(this.reconnectTimer);
-        this.reconnectTimer = undefined;
+        if (this.reconnectTimer) {
+            clearTimeout(this.reconnectTimer);
+            this.reconnectTimer = undefined;
+        }
         this.buffer = "";
         if (this.client) {
             this.client.destroy();

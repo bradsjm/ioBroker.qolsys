@@ -23,7 +23,7 @@ export class QolsysEventParser extends EventEmitter {
      * @emits zone: Emits an event with a zone {ZoneJson} payload.
      */
     constructor(logger: ioBroker.Logger) {
-        super({ captureRejections: true });
+        super();
         this.log = logger;
         this.countdown.on("countdown", this.onCountdown.bind(this));
         this.countdown.on("stopped", this.onCountdownStopped.bind(this));

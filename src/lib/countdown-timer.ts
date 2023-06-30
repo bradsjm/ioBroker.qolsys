@@ -12,7 +12,7 @@ export class CountdownTimer<T> extends EventEmitter {
      * @return A new instance of the class
      */
     constructor() {
-        super({ captureRejections: true });
+        super();
         this._countdownSeconds = this._remainingTime = 0;
     }
 

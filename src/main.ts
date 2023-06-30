@@ -1,11 +1,11 @@
 import * as utils from "@iobroker/adapter-core";
 import { AlarmType, ArmingStateType } from "./enums";
-
 import { AlarmJson, ArmingJson, ErrorJson, PartitionJson, ZoneJson } from "./interfaces";
 import { QolsysEventParser } from "./lib/qolsys-event-parser";
 import { QolsysPanelClient } from "./lib/qolsys-panel-client";
 import { convertToTitleCase, getPath, getZoneRole } from "./lib/utils";
 import { LanguagePack } from "./lib/language-pack";
+import { EventEmitter } from "events";
 
 /**
  * Qolsys IQ Panel adapter.
@@ -26,6 +26,7 @@ class QolsysPanel extends utils.Adapter {
             ...options,
             name: "qolsys",
         });
+        EventEmitter.captureRejections = true;
         this.on("ready", this.onReady.bind(this));
         this.on("stateChange", this.onStateChange.bind(this));
         this.on("unload", this.onUnload.bind(this));
@@ -347,7 +348,7 @@ class QolsysPanel extends utils.Adapter {
         this.panel.on("close", this.onPanelDisconnect.bind(this));
         this.panel.on("connect", this.onPanelConnect.bind(this));
         this.panel.on("data", this.eventParser.parseEventPayload.bind(this.eventParser));
-        this.panel.on("error", this.onPanelError.bind(this));
+        this.panel.on("error", this.log.error.bind(this));
 
         // Start connection to the panel
         this.panel.connect();
@@ -424,7 +425,7 @@ class QolsysPanel extends utils.Adapter {
      */
     private async onStateChange(id: string, state: ioBroker.State | null | undefined): Promise<void> {
         // Early return if the conditions are not met
-        if (!state || state.ack || !this.panel || !state.val) return;
+        if (!state || state.ack || !this.panel || state.val == null) return;
 
         // Get which partition id is associated with the received command object
         const object = await this.getForeignObjectAsync(id);
