@@ -23,15 +23,23 @@ var import_qolsys_event_parser = require("./lib/qolsys-event-parser");
 var import_qolsys_panel_client = require("./lib/qolsys-panel-client");
 var import_utils = require("./lib/utils");
 var import_language_pack = require("./lib/language-pack");
+var import_events = require("events");
 class QolsysPanel extends utils.Adapter {
   constructor(options = {}) {
     super({
       ...options,
       name: "qolsys"
     });
+    import_events.EventEmitter.captureRejections = true;
     this.on("ready", this.onReady.bind(this));
     this.on("stateChange", this.onStateChange.bind(this));
     this.on("unload", this.onUnload.bind(this));
+  }
+  async OnPanelError(error) {
+    const errorType = (0, import_utils.convertToTitleCase)(error.error_type.toLowerCase());
+    const value = `${errorType}: ${error.description} (Partition ${error.partition_id + 1}) `;
+    this.log.error(value);
+    await this.setStateChangedAsync("panel.lastError", { val: value, ack: true });
   }
   async createPartitionObjects(id, partition) {
     await this.createChannelAsync("panel", id, { name: partition.name });
@@ -46,11 +54,13 @@ class QolsysPanel extends utils.Adapter {
         "DISARM": "Disarm",
         "AUXILIARY": "Auxiliary Alarm",
         "FIRE": "Fire Alarm",
-        "POLICE": "Police Alarm"
+        "POLICE": "Police Alarm",
+        "NOP": "None"
       },
       role: "value",
       read: false,
-      write: true
+      write: true,
+      def: "NOP"
     }, { partition_id: partition.partition_id });
     await this.createStateAsync("panel", id, "alarmState", {
       name: import_language_pack.LanguagePack.LastAlarmState,
@@ -112,17 +122,11 @@ class QolsysPanel extends utils.Adapter {
     await this.subscribeStatesAsync((0, import_utils.getPath)("panel", id, "command"));
   }
   async createZoneObjects(zone, role) {
-    const zoneTypeTitle = (0, import_utils.convertToTitleCase)(zone.type);
-    await this.createChannelAsync("zones", zone.id, { name: zone.name }, {
-      zone_id: zone.zone_id,
-      partition_id: zone.partition_id
-    });
-    await this.createStateAsync(
-      "zones",
-      zone.id,
-      "state",
-      {
-        name: import_language_pack.LanguagePack.State,
+    const zoneTypeTitle = `${(0, import_utils.convertToTitleCase)(zone.type)} (${zone.group})`;
+    await this.setObjectAsync(`zones.${zone.id}`, {
+      type: "state",
+      common: {
+        name: zone.name,
         desc: zoneTypeTitle,
         type: "boolean",
         states: {
@@ -134,33 +138,14 @@ class QolsysPanel extends utils.Adapter {
         write: false,
         def: false
       },
-      {
+      native: {
         group: zone.group,
         partition_id: zone.partition_id,
         zone_alarm_type: zone.zone_alarm_type,
         zone_id: zone.zone_id,
         zone_physical_type: zone.zone_physical_type
       }
-    );
-    await this.createStateAsync(
-      "zones",
-      zone.id,
-      "tamper",
-      {
-        name: import_language_pack.LanguagePack.Tamper,
-        desc: zoneTypeTitle,
-        type: "boolean",
-        states: {
-          "true": "Tampered",
-          "false": "Normal"
-        },
-        role: "indicator.alarm",
-        read: true,
-        write: false,
-        def: false
-      },
-      { partition_id: zone.partition_id }
-    );
+    });
   }
   async getPartitionArmState(partition_id) {
     const id = `partition${partition_id + 1}`;
@@ -175,10 +160,11 @@ class QolsysPanel extends utils.Adapter {
     return typeof (delayState == null ? void 0 : delayState.val) === "number" ? delayState == null ? void 0 : delayState.val : void 0;
   }
   async onAlarm(alarm) {
+    var _a;
     const id = `partition${alarm.partition_id + 1}`;
     this.log.info(`triggering ${alarm.alarm_type} alarm on ${id}`);
     await this.setStateChangedAsync((0, import_utils.getPath)("panel", id, "alarmState"), {
-      val: alarm.alarm_type,
+      val: (_a = alarm.alarm_type) != null ? _a : "NONE",
       ack: true
     });
   }
@@ -247,12 +233,6 @@ class QolsysPanel extends utils.Adapter {
     this.log.error(error.message);
     await this.setStateChangedAsync("panel.lastError", { val: error.message, ack: true });
   }
-  async onPartitionError(error) {
-    const errorType = (0, import_utils.convertToTitleCase)(error.error_type.toLowerCase());
-    const value = `${errorType}: ${error.description} (Partition ${error.partition_id + 1}) `;
-    this.log.error(value);
-    await this.setStateChangedAsync("panel.lastError", { val: value, ack: true });
-  }
   async onReady() {
     await this.setOnlineStatus(false);
     if (!this.config.host || !this.config.port || !this.config.secureToken) {
@@ -262,18 +242,18 @@ class QolsysPanel extends utils.Adapter {
     this.eventParser = new import_qolsys_event_parser.QolsysEventParser(this.log);
     this.eventParser.on("arming", this.onArmingChange.bind(this));
     this.eventParser.on("alarm", this.onAlarm.bind(this));
-    this.eventParser.on("error", this.onPartitionError.bind(this));
-    this.eventParser.on("partition", this.onReceivedPartition.bind(this));
+    this.eventParser.on("error", this.OnPanelError.bind(this));
+    this.eventParser.on("partition", this.onReceivePartition.bind(this));
     this.eventParser.on("secureArm", this.onSecureArmChange.bind(this));
     this.eventParser.on("zone", this.onReceivedZone.bind(this));
     this.panel = new import_qolsys_panel_client.QolsysPanelClient(this.log, this.config);
     this.panel.on("close", this.onPanelDisconnect.bind(this));
     this.panel.on("connect", this.onPanelConnect.bind(this));
     this.panel.on("data", this.eventParser.parseEventPayload.bind(this.eventParser));
-    this.panel.on("error", this.onPanelError.bind(this));
+    this.panel.on("error", this.log.error.bind(this));
     this.panel.connect();
   }
-  async onReceivedPartition(partition) {
+  async onReceivePartition(partition) {
     this.log.debug(`received partition #${partition.partition_id} (${partition.name})`);
     const id = `partition${partition.partition_id + 1}`;
     await this.createPartitionObjects(id, partition);
@@ -285,15 +265,13 @@ class QolsysPanel extends utils.Adapter {
     if (!role) {
       return;
     }
+    const stateId = `zones.${zone.id}`;
     if (event === "delete") {
-      this.log.info(`zone ${zone.id} delete not currently implemented`);
+      this.log.info(`removing zone ${zone.id} (${zone.name})`);
+      await this.deleteStateAsync(stateId);
       return;
     }
     await this.createZoneObjects(zone, role);
-    const stateId = `zones.${zone.id}.state`;
-    if (event === "active") {
-      await this.updateZoneTamperState(zone);
-    }
     this.log.debug(`setting zone #${zone.zone_id} (${zone.name}) to ${zone.status}`);
     const isOpen = zone.status === "Open";
     await this.setStateChangedAsync(stateId, { val: isOpen, ack: true });
@@ -305,7 +283,7 @@ class QolsysPanel extends utils.Adapter {
     await this.setStateChangedAsync(secureArmId, { val: partition.secure_arm, ack: true });
   }
   async onStateChange(id, state) {
-    if (!state || state.ack || !this.panel || !state.val)
+    if (!state || state.ack || !this.panel || state.val == null)
       return;
     const object = await this.getForeignObjectAsync(id);
     const partition_id = object == null ? void 0 : object.native.partition_id;
@@ -374,20 +352,6 @@ class QolsysPanel extends utils.Adapter {
         const id = `panel.partition${partitionId + 1}.isFaulted`;
         await this.setStateChangedAsync(id, { val: isFaulted, ack: true });
       }
-    }
-  }
-  async updateZoneTamperState(zone) {
-    const stateId = `zones.${zone.id}.state`;
-    const tamperId = `zones.${zone.id}.tamper`;
-    const isOpen = zone.status === "Open";
-    const currentState = await this.getStateAsync(stateId);
-    const tamperState = await this.getStateAsync(tamperId);
-    if (isOpen && (currentState == null ? void 0 : currentState.val)) {
-      this.log.debug(`tampering zone #${zone.zone_id} (${zone.name})`);
-      await this.setStateChangedAsync(tamperId, { val: true, ack: true });
-    } else if (!isOpen && (tamperState == null ? void 0 : tamperState.val)) {
-      this.log.debug(`not tampering zone #${zone.zone_id} (${zone.name})`);
-      await this.setStateChangedAsync(tamperId, { val: false, ack: true });
     }
   }
 }

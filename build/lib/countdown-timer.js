@@ -23,9 +23,9 @@ __export(countdown_timer_exports, {
 module.exports = __toCommonJS(countdown_timer_exports);
 var import_events = require("events");
 class CountdownTimer extends import_events.EventEmitter {
-  constructor(countdownSeconds = 0) {
-    super({ captureRejections: true });
-    this._countdownSeconds = countdownSeconds;
+  constructor() {
+    super();
+    this._countdownSeconds = this._remainingTime = 0;
   }
   get countdownSeconds() {
     return this._countdownSeconds;
@@ -43,18 +43,11 @@ class CountdownTimer extends import_events.EventEmitter {
     if (this.intervalId) {
       clearInterval(this.intervalId);
       this.intervalId = void 0;
-      this._remainingTime = this._countdownSeconds;
       this.emit("paused", this._payload);
     }
   }
-  reset() {
-    this.stop();
-    this._countdownSeconds = 0;
-    this._payload = void 0;
-    this._remainingTime = void 0;
-  }
   resume() {
-    if (!this.intervalId) {
+    if (!this.intervalId && this._remainingTime > 0) {
       this.intervalId = setInterval(this.countdown.bind(this), 1e3);
       this.emit("resumed", this._payload);
     }
@@ -63,26 +56,24 @@ class CountdownTimer extends import_events.EventEmitter {
     if (this.intervalId) {
       clearInterval(this.intervalId);
     }
-    this._countdownSeconds = seconds;
+    this._remainingTime = this._countdownSeconds = seconds;
     if (payload) {
       this._payload = payload;
     }
+    this._remainingTime = this._countdownSeconds;
     this.intervalId = setInterval(this.countdown.bind(this), 1e3);
   }
   stop() {
     if (this.intervalId) {
       clearInterval(this.intervalId);
       this.intervalId = void 0;
-      this._countdownSeconds = 0;
-      this._remainingTime = void 0;
       this.emit("stopped", this._payload);
     }
   }
   countdown() {
-    if (this._countdownSeconds >= 0) {
-      this.emit("countdown", this._countdownSeconds, this._payload);
-      this._countdownSeconds--;
-      this._remainingTime = this._countdownSeconds;
+    if (this._remainingTime >= 0) {
+      this.emit("countdown", this._remainingTime, this._payload);
+      this._remainingTime--;
     } else {
       this.stop();
       this.emit("completed", this._payload);

@@ -37,10 +37,11 @@ const MAX_RECONNECT_INTERVAL = 6e4;
 const PING_INTERVAL = 3e4;
 class QolsysPanelClient extends import_events.EventEmitter {
   constructor(logger, config) {
-    super({ captureRejections: true });
+    super();
     this.buffer = "";
     this.reconnectInterval = RECONNECT_INTERVAL;
     this._autoReconnect = true;
+    this._lastAck = 0;
     this.config = config;
     this.log = logger;
   }
@@ -53,6 +54,9 @@ class QolsysPanelClient extends import_events.EventEmitter {
       clearTimeout(this.reconnectTimer);
       this.reconnectTimer = void 0;
     }
+  }
+  get lastAck() {
+    return this._lastAck;
   }
   get isConnected() {
     var _a;
@@ -125,8 +129,10 @@ class QolsysPanelClient extends import_events.EventEmitter {
     });
   }
   disconnect() {
-    clearTimeout(this.reconnectTimer);
-    this.reconnectTimer = void 0;
+    if (this.reconnectTimer) {
+      clearTimeout(this.reconnectTimer);
+      this.reconnectTimer = void 0;
+    }
     this.buffer = "";
     if (this.client) {
       this.client.destroy();
@@ -185,6 +191,7 @@ class QolsysPanelClient extends import_events.EventEmitter {
       if (line === "ACK") {
         this.log.debug("received ACK");
         this.emit("ack");
+        this._lastAck = Date.now();
         continue;
       }
       this.log.debug("received: " + line);
@@ -201,7 +208,7 @@ class QolsysPanelClient extends import_events.EventEmitter {
   }
   ping() {
     var _a;
-    if (!this.isConnected) {
+    if (!this.isConnected || Date.now() - this._lastAck > PING_INTERVAL * 2) {
       this.disconnect();
       return;
     }

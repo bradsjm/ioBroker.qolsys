@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "qolsys",
-    "version": "0.0.3-alpha.0",
+    "version": "0.0.3",
     "news": {
+      "0.0.3": {
+        "en": "Updated code comments, created code diagram and cleaned up the countdown class.",
+        "de": "Aktualisierte Code-Kommentare, erstellte Code-Diagramm und gereinigt die Countdown-Klasse.",
+        "ru": "Обновленные комментарии кода, созданная диаграмма кода и очищенный вверх класс отсчета.",
+        "pt": "Comentários de código atualizados, diagrama de código criado e limpou a classe contagem regressiva.",
+        "nl": "Verouderde code commentaar, creëerde code diagram en maakte de aftelles schoon.",
+        "fr": "Actualisé les commentaires de code, créé le diagramme de code et nettoyé la classe de compte à rebours.",
+        "it": "Aggiornato i commenti del codice, creato il diagramma del codice e ripulito la classe conto alla rovescia.",
+        "es": "Actualización de los comentarios de código, creó el diagrama de código y limpió la clase de cuenta atrás.",
+        "pl": "Ulepszona komentarze kodowe stworzyła diagram kodowy i czyściła klasę odliczania.",
+        "uk": "Оновлені коментарі коду, створені діаграми коду і очищають відлік класу.",
+        "zh-cn": "更新的守则评论创建了编码图表,并清理了计值班。."
+      },
       "0.0.3-alpha.0": {
         "en": "Cleaned up code and added support for zone deletions",
         "de": "Gesäuberter Code und zusätzliche Unterstützung für Zonenlöschungen",

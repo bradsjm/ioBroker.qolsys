@@ -26,7 +26,7 @@ var import_enums = require("../enums");
 var import_countdown_timer = require("./countdown-timer");
 class QolsysEventParser extends import_events.EventEmitter {
   constructor(logger) {
-    super({ captureRejections: true });
+    super();
     this.countdown = new import_countdown_timer.CountdownTimer();
     this._partitions = [];
     this.log = logger;
@@ -162,45 +162,45 @@ class QolsysEventParser extends import_events.EventEmitter {
       }
     }
   }
-  handleZoneActive(zone) {
-    this.log.debug("zone active: " + JSON.stringify(zone));
+  handleZoneActive(payload) {
+    this.log.debug("zone active: " + JSON.stringify(payload));
     if (!this._partitions.some((partition) => {
-      return partition.zone_list.some((z) => {
-        if (z.zone_id === zone.zone_id) {
-          this.emit("zone", Object.assign(z, zone), "active");
+      return partition.zone_list.some((zone) => {
+        if (zone.zone_id === payload.zone_id) {
+          this.emit("zone", Object.assign(zone, payload), "active");
           return true;
         }
         return false;
       });
     })) {
-      this.log.warn("zone not found: " + JSON.stringify(zone));
+      this.log.warn("zone not found: " + JSON.stringify(payload));
     }
   }
-  handleZoneDelete(zone) {
-    this.log.debug("zone delete: " + JSON.stringify(zone));
+  handleZoneDelete(payload) {
+    this.log.debug("zone delete: " + JSON.stringify(payload));
     this._partitions = this._partitions.map((partition) => {
       const updatedPartition = { ...partition };
-      updatedPartition.zone_list = updatedPartition.zone_list.filter((z) => z.zone_id !== zone.zone_id);
+      updatedPartition.zone_list = updatedPartition.zone_list.filter((z) => z.zone_id !== payload.zone_id);
       if (updatedPartition.zone_list.length < partition.zone_list.length) {
-        this.emit("zone", zone, "delete");
+        this.emit("zone", payload, "delete");
       } else {
-        this.log.debug("unable to delete zone: " + JSON.stringify(zone));
+        this.log.debug("unable to delete zone: " + JSON.stringify(payload));
       }
       return updatedPartition;
     });
   }
-  handleZoneUpdate(zone) {
-    this.log.debug("zone update: " + JSON.stringify(zone));
-    const partition = this._partitions.find((p) => p.partition_id === zone.partition_id);
+  handleZoneUpdate(payload) {
+    this.log.debug("zone update: " + JSON.stringify(payload));
+    const partition = this._partitions.find((p) => p.partition_id === payload.partition_id);
     if (partition !== void 0) {
-      const idx = partition.zone_list.findIndex((z) => z.zone_id === zone.zone_id);
+      const idx = partition.zone_list.findIndex((z) => z.zone_id === payload.zone_id);
       if (idx === -1) {
-        partition.zone_list.push(zone);
+        partition.zone_list.push(payload);
       } else {
-        partition.zone_list[idx] = zone;
+        partition.zone_list[idx] = payload;
       }
     }
-    this.emit("zone", zone, "update");
+    this.emit("zone", payload, "update");
   }
   onCountdown(seconds, payload) {
     this.emit("arming", {

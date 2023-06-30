@@ -97,8 +97,7 @@ Existing codes will have 00 appended to them.
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
-
-### **WORK IN PROGRESS**
+### 0.0.3 (2023-06-30)
 
 Updated code comments, created code diagram and cleaned up the countdown class.
 
