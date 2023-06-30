@@ -98,9 +98,9 @@ Existing codes will have 00 appended to them.
     ### **WORK IN PROGRESS**
 -->
 
-### WORK IN PROGRESS
+### **WORK IN PROGRESS**
 
-Updated code comments and cleaned up the countdown class.
+Updated code comments, created code diagram and cleaned up the countdown class.
 
 ### 0.0.3-alpha.0 (2023-06-25)
 
