@@ -1,15 +1,6 @@
-import { AlarmJson } from "./alarm-json.interface";
-import { ArmingJson } from "./arming-json.interface";
-import { ErrorJson } from "./error-json.interface";
-import { PartitionJson } from "./partition-json.interface";
-import { PayloadJson } from "./payload-json.interface";
-import { ZoneJson } from "./zone-json.interface";
-
-export {
-    ArmingJson,
-    AlarmJson,
-    ErrorJson,
-    PartitionJson,
-    PayloadJson,
-    ZoneJson
-}
+export { AlarmJson } from "./alarm-json.interface";
+export { ArmingJson } from "./arming-json.interface";
+export { ErrorJson } from "./error-json.interface";
+export { PartitionJson } from "./partition-json.interface";
+export { PayloadJson } from "./payload-json.interface";
+export { ZoneJson } from "./zone-json.interface";

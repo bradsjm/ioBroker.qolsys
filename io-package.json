@@ -1,264 +1,261 @@
 {
-  "common": {
-    "name": "qolsys",
-    "version": "0.0.3",
-    "news": {
-      "0.0.3": {
-        "en": "Updated code comments, created code diagram and cleaned up the countdown class.",
-        "de": "Aktualisierte Code-Kommentare, erstellte Code-Diagramm und gereinigt die Countdown-Klasse.",
-        "ru": "Обновленные комментарии кода, созданная диаграмма кода и очищенный вверх класс отсчета.",
-        "pt": "Comentários de código atualizados, diagrama de código criado e limpou a classe contagem regressiva.",
-        "nl": "Verouderde code commentaar, creëerde code diagram en maakte de aftelles schoon.",
-        "fr": "Actualisé les commentaires de code, créé le diagramme de code et nettoyé la classe de compte à rebours.",
-        "it": "Aggiornato i commenti del codice, creato il diagramma del codice e ripulito la classe conto alla rovescia.",
-        "es": "Actualización de los comentarios de código, creó el diagrama de código y limpió la clase de cuenta atrás.",
-        "pl": "Ulepszona komentarze kodowe stworzyła diagram kodowy i czyściła klasę odliczania.",
-        "uk": "Оновлені коментарі коду, створені діаграми коду і очищають відлік класу.",
-        "zh-cn": "更新的守则评论创建了编码图表,并清理了计值班。."
-      },
-      "0.0.3-alpha.0": {
-        "en": "Cleaned up code and added support for zone deletions",
-        "de": "Gesäuberter Code und zusätzliche Unterstützung für Zonenlöschungen",
-        "ru": "Очищен код и добавлена поддержка удалений зоны",
-        "pt": "Limpe o código e adicione suporte para exclusões de zona",
-        "nl": "De code opruimen en steun toevoegen voor zone verwijding",
-        "fr": "Nettoyer le code et ajouter le support pour les suppressions de zones",
-        "it": "Pulito codice e supporto aggiunto per le cancellazioni della zona",
-        "es": "Código de limpieza y apoyo añadido para las eliminaciones de zonas",
-        "pl": "Oczyszczony kod i dodał wsparcie dla delecji strefy",
-        "uk": "Прибираний код і додана підтримка зняття зони",
-        "zh-cn": "B. 清洁守则和对删除区的额外支持"
-      },
-      "0.0.2-alpha.0": {
-        "en": "Testing",
-        "de": "Prüfung",
-        "ru": "Тестирование",
-        "pt": "Testes",
-        "nl": "Test",
-        "fr": "Essais",
-        "it": "Testing",
-        "es": "Pruebas",
-        "pl": "Testowanie",
-        "uk": "Тестування",
-        "zh-cn": "试验"
-      },
-      "0.0.1": {
-        "en": "initial release",
-        "de": "Erstveröffentlichung",
-        "ru": "Начальная версия",
-        "pt": "lançamento inicial",
-        "nl": "Eerste uitgave",
-        "fr": "Première version",
-        "it": "Versione iniziale",
-        "es": "Versión inicial",
-        "pl": "Pierwsze wydanie",
-        "uk": "Початкова версія",
-        "zh-cn": "首次出版"
-      }
-    },
-    "titleLang": {
-      "en": "Qolsys IQ Panel",
-      "de": "Qolsys IQ Panel",
-      "ru": "Панель Qolsys IQ",
-      "pt": "Painel de QI da QI",
-      "nl": "Qolsy IQ Panel",
-      "fr": "Qolsys IQ Panel",
-      "it": "Pannello di QI",
-      "es": "Qolsys IQ Panel",
-      "pl": "IQ Panel",
-      "uk": "Qolsys IQ панель",
-      "zh-cn": "Kolsy IQ小组"
-    },
-    "desc": {
-      "en": "Supports the IQ Panel basic security features",
-      "de": "Unterstützt die grundlegenden Sicherheitsfunktionen des IQ Panel",
-      "ru": "Поддерживает основные функции безопасности IQ Panel",
-      "pt": "Suporta os recursos básicos de segurança do painel IQ",
-      "nl": "Steun de IQ Panel beveiligingsbeelden",
-      "fr": "Supporte les caractéristiques de sécurité de base du Panneau IQ",
-      "it": "Supporta le funzionalità di sicurezza di base del Pannello IQ",
-      "es": "Supports the IQ Panel basic security features",
-      "pl": "Wsparcie dla IQ Panel podstawowego bezpieczeństwa jest wspierane przez IQ Panel",
-      "uk": "Підтримка основних функцій безпеки IQ панелі",
-      "zh-cn": "支持专家小组的基本安全特征"
-    },
-    "authors": [
-      "Jonathan Bradshaw <jb@nrgup.net>"
-    ],
-    "keywords": [
-      "ioBroker",
-      "Smart Home",
-      "home automation",
-      "qolsys",
-      "iqpanel"
-    ],
-    "license": "MIT",
-    "platform": "Javascript/Node.js",
-    "main": "build/main.js",
-    "icon": "qolsys.png",
-    "enabled": true,
-    "extIcon": "https://raw.githubusercontent.com/bradsjm/ioBroker.qolsys/main/admin/qolsys.png",
-    "readme": "https://github.com/bradsjm/ioBroker.qolsys/blob/main/README.md",
-    "loglevel": "info",
-    "mode": "daemon",
-    "type": "alarm",
-    "compact": true,
-    "connectionType": "local",
-    "dataSource": "push",
-    "adminUI": {
-      "config": "json"
-    },
-    "dependencies": [
-      {
-        "js-controller": ">=3.3.22"
-      }
-    ],
-    "globalDependencies": [
-      {
-        "admin": ">=5.1.13"
-      }
-    ]
-  },
-  "encryptedNative": [
-    "secureToken",
-    "userPinCode"
-  ],
-  "protectedNative": [
-    "secureToken",
-    "userPinCode"
-  ],
-  "native": {
-    "host": "",
-    "port": 12345,
-    "secureToken": "",
-    "userPinCode": "",
-    "enableArming": false,
-    "enableDisarming": true,
-    "enableAlarms": false
-  },
-  "objects": [],
-  "instanceObjects": [
-    {
-      "_id": "info",
-      "type": "channel",
-      "common": {
-        "name": {
-          "en": "Information",
-          "de": "Information",
-          "ru": "Информация",
-          "pt": "Em formação",
-          "nl": "Informatie",
-          "fr": "Information",
-          "it": "Informazione",
-          "es": "Información",
-          "pl": "Informacja",
-          "zh-cn": "信息"
-        }
-      },
-      "native": {}
-    },
-    {
-      "_id": "info.connection",
-      "type": "state",
-      "common": {
-        "role": "indicator.connected",
-        "name": {
-          "en": "Panel is connected",
-          "de": "Panel ist angeschlossen",
-          "ru": "Панель подключена",
-          "pt": "Painel está conectado",
-          "nl": "Panel is verbonden",
-          "fr": "Panneau connecté",
-          "it": "Il pannello è collegato",
-          "es": "Panel is connected",
-          "pl": "Panel jest połączony",
-          "uk": "Панель підключений",
-          "zh-cn": "专家小组"
+    "common": {
+        "name": "qolsys",
+        "version": "0.0.3",
+        "news": {
+            "0.0.3": {
+                "en": "Updated code comments, created code diagram and cleaned up the countdown class.",
+                "de": "Aktualisierte Code-Kommentare, erstellte Code-Diagramm und gereinigt die Countdown-Klasse.",
+                "ru": "Обновленные комментарии кода, созданная диаграмма кода и очищенный вверх класс отсчета.",
+                "pt": "Comentários de código atualizados, diagrama de código criado e limpou a classe contagem regressiva.",
+                "nl": "Verouderde code commentaar, creëerde code diagram en maakte de aftelles schoon.",
+                "fr": "Actualisé les commentaires de code, créé le diagramme de code et nettoyé la classe de compte à rebours.",
+                "it": "Aggiornato i commenti del codice, creato il diagramma del codice e ripulito la classe conto alla rovescia.",
+                "es": "Actualización de los comentarios de código, creó el diagrama de código y limpió la clase de cuenta atrás.",
+                "pl": "Ulepszona komentarze kodowe stworzyła diagram kodowy i czyściła klasę odliczania.",
+                "uk": "Оновлені коментарі коду, створені діаграми коду і очищають відлік класу.",
+                "zh-cn": "更新的守则评论创建了编码图表,并清理了计值班。."
+            },
+            "0.0.3-alpha.0": {
+                "en": "Cleaned up code and added support for zone deletions",
+                "de": "Gesäuberter Code und zusätzliche Unterstützung für Zonenlöschungen",
+                "ru": "Очищен код и добавлена поддержка удалений зоны",
+                "pt": "Limpe o código e adicione suporte para exclusões de zona",
+                "nl": "De code opruimen en steun toevoegen voor zone verwijding",
+                "fr": "Nettoyer le code et ajouter le support pour les suppressions de zones",
+                "it": "Pulito codice e supporto aggiunto per le cancellazioni della zona",
+                "es": "Código de limpieza y apoyo añadido para las eliminaciones de zonas",
+                "pl": "Oczyszczony kod i dodał wsparcie dla delecji strefy",
+                "uk": "Прибираний код і додана підтримка зняття зони",
+                "zh-cn": "B. 清洁守则和对删除区的额外支持"
+            },
+            "0.0.2-alpha.0": {
+                "en": "Testing",
+                "de": "Prüfung",
+                "ru": "Тестирование",
+                "pt": "Testes",
+                "nl": "Test",
+                "fr": "Essais",
+                "it": "Testing",
+                "es": "Pruebas",
+                "pl": "Testowanie",
+                "uk": "Тестування",
+                "zh-cn": "试验"
+            },
+            "0.0.1": {
+                "en": "initial release",
+                "de": "Erstveröffentlichung",
+                "ru": "Начальная версия",
+                "pt": "lançamento inicial",
+                "nl": "Eerste uitgave",
+                "fr": "Première version",
+                "it": "Versione iniziale",
+                "es": "Versión inicial",
+                "pl": "Pierwsze wydanie",
+                "uk": "Початкова версія",
+                "zh-cn": "首次出版"
+            }
         },
-        "type": "boolean",
-        "read": true,
-        "write": false,
-        "def": false
-      },
-      "native": {}
-    },
-    {
-      "_id": "panel",
-      "type": "device",
-      "common": {
-        "name": {
-          "en": "Qolsys IQ Panel",
-          "de": "Qolsys IQ Panel",
-          "ru": "Панель Qolsys IQ",
-          "pt": "Painel de QI da QI",
-          "nl": "Qolsy IQ Panel",
-          "fr": "Qolsys IQ Panel",
-          "it": "Pannello di QI",
-          "es": "Qolsys IQ Panel",
-          "pl": "IQ Panel",
-          "uk": "Qolsys IQ панель",
-          "zh-cn": "Kolsy IQ小组"
-        }
-      },
-      "native": {}
-    },
-    {
-      "_id": "panel.lastError",
-      "type": "state",
-      "common": {
-        "name": {
-          "en": "Last Error",
-          "de": "Letzter Fehler",
-          "ru": "Последняя ошибка",
-          "pt": "Último erro",
-          "nl": "Laatste fout",
-          "fr": "Dernière erreur",
-          "it": "Ultimo errore",
-          "es": "Último error",
-          "pl": "Error",
-          "uk": "Остання помилка",
-          "zh-cn": "上一次逮捕证"
+        "titleLang": {
+            "en": "Qolsys IQ Panel",
+            "de": "Qolsys IQ Panel",
+            "ru": "Панель Qolsys IQ",
+            "pt": "Painel de QI da QI",
+            "nl": "Qolsy IQ Panel",
+            "fr": "Qolsys IQ Panel",
+            "it": "Pannello di QI",
+            "es": "Qolsys IQ Panel",
+            "pl": "IQ Panel",
+            "uk": "Qolsys IQ панель",
+            "zh-cn": "Kolsy IQ小组"
         },
         "desc": {
-          "en": "Details of the last error from panel",
-          "de": "Details des letzten Fehlers von Panel",
-          "ru": "Детали последней ошибки из панели",
-          "pt": "Detalhes do último erro do painel",
-          "nl": "Vertaling:",
-          "fr": "Détails de la dernière erreur de panneau",
-          "it": "Dettagli dell'ultimo errore da pannello",
-          "es": "Detalles del último error del panel",
-          "pl": "Szczegóły ostatniego błędu z panelu",
-          "uk": "Деталі останньої помилки з панелі",
-          "zh-cn": "小组最后错误的详情"
+            "en": "Supports the IQ Panel basic security features",
+            "de": "Unterstützt die grundlegenden Sicherheitsfunktionen des IQ Panel",
+            "ru": "Поддерживает основные функции безопасности IQ Panel",
+            "pt": "Suporta os recursos básicos de segurança do painel IQ",
+            "nl": "Steun de IQ Panel beveiligingsbeelden",
+            "fr": "Supporte les caractéristiques de sécurité de base du Panneau IQ",
+            "it": "Supporta le funzionalità di sicurezza di base del Pannello IQ",
+            "es": "Supports the IQ Panel basic security features",
+            "pl": "Wsparcie dla IQ Panel podstawowego bezpieczeństwa jest wspierane przez IQ Panel",
+            "uk": "Підтримка основних функцій безпеки IQ панелі",
+            "zh-cn": "支持专家小组的基本安全特征"
         },
-        "type": "string",
-        "role": "indicator.maintenance",
-        "read": true,
-        "write": false,
-        "def": ""
-      },
-      "native": {}
+        "authors": [
+            "Jonathan Bradshaw <jb@nrgup.net>"
+        ],
+        "keywords": [
+            "qolsys",
+            "iqpanel"
+        ],
+        "license": "MIT",
+        "platform": "Javascript/Node.js",
+        "main": "build/main.js",
+        "icon": "qolsys.png",
+        "enabled": true,
+        "extIcon": "https://raw.githubusercontent.com/bradsjm/ioBroker.qolsys/main/admin/qolsys.png",
+        "readme": "https://github.com/bradsjm/ioBroker.qolsys/blob/main/README.md",
+        "loglevel": "info",
+        "mode": "daemon",
+        "type": "alarm",
+        "compact": true,
+        "connectionType": "local",
+        "dataSource": "push",
+        "adminUI": {
+            "config": "json"
+        },
+        "dependencies": [
+            {
+                "js-controller": ">=3.3.22"
+            }
+        ],
+        "globalDependencies": [
+            {
+                "admin": ">=5.1.13"
+            }
+        ]
     },
-    {
-      "_id": "zones",
-      "type": "device",
-      "common": {
-        "name": {
-          "en": "Qolsys IQ Zones",
-          "de": "Qolsys IQ Zones",
-          "ru": "Qolsys IQ зоны",
-          "pt": "Zonas de QI da QI da Qolsys",
-          "nl": "Qolsy IQ Zones",
-          "fr": "Zones Qolsys IQ",
-          "it": "Qolsys IQ Zone",
-          "es": "Zonas Qolsys IQ",
-          "pl": "Strefa IQ",
-          "uk": "Qolsys IQ зони",
-          "zh-cn": "Kolsy IQ区"
+    "encryptedNative": [
+        "secureToken",
+        "userPinCode"
+    ],
+    "protectedNative": [
+        "secureToken",
+        "userPinCode"
+    ],
+    "native": {
+        "host": "",
+        "port": 12345,
+        "secureToken": "",
+        "userPinCode": "",
+        "enableArming": false,
+        "enableDisarming": true,
+        "enableAlarms": false
+    },
+    "objects": [],
+    "instanceObjects": [
+        {
+            "_id": "info",
+            "type": "channel",
+            "common": {
+                "name": {
+                    "en": "Information",
+                    "de": "Information",
+                    "ru": "Информация",
+                    "pt": "Em formação",
+                    "nl": "Informatie",
+                    "fr": "Information",
+                    "it": "Informazione",
+                    "es": "Información",
+                    "pl": "Informacja",
+                    "zh-cn": "信息"
+                }
+            },
+            "native": {}
+        },
+        {
+            "_id": "info.connection",
+            "type": "state",
+            "common": {
+                "role": "indicator.connected",
+                "name": {
+                    "en": "Panel is connected",
+                    "de": "Panel ist angeschlossen",
+                    "ru": "Панель подключена",
+                    "pt": "Painel está conectado",
+                    "nl": "Panel is verbonden",
+                    "fr": "Panneau connecté",
+                    "it": "Il pannello è collegato",
+                    "es": "Panel is connected",
+                    "pl": "Panel jest połączony",
+                    "uk": "Панель підключений",
+                    "zh-cn": "专家小组"
+                },
+                "type": "boolean",
+                "read": true,
+                "write": false,
+                "def": false
+            },
+            "native": {}
+        },
+        {
+            "_id": "panel",
+            "type": "device",
+            "common": {
+                "name": {
+                    "en": "Qolsys IQ Panel",
+                    "de": "Qolsys IQ Panel",
+                    "ru": "Панель Qolsys IQ",
+                    "pt": "Painel de QI da QI",
+                    "nl": "Qolsy IQ Panel",
+                    "fr": "Qolsys IQ Panel",
+                    "it": "Pannello di QI",
+                    "es": "Qolsys IQ Panel",
+                    "pl": "IQ Panel",
+                    "uk": "Qolsys IQ панель",
+                    "zh-cn": "Kolsy IQ小组"
+                }
+            },
+            "native": {}
+        },
+        {
+            "_id": "panel.lastError",
+            "type": "state",
+            "common": {
+                "name": {
+                    "en": "Last Error",
+                    "de": "Letzter Fehler",
+                    "ru": "Последняя ошибка",
+                    "pt": "Último erro",
+                    "nl": "Laatste fout",
+                    "fr": "Dernière erreur",
+                    "it": "Ultimo errore",
+                    "es": "Último error",
+                    "pl": "Error",
+                    "uk": "Остання помилка",
+                    "zh-cn": "上一次逮捕证"
+                },
+                "desc": {
+                    "en": "Details of the last error from panel",
+                    "de": "Details des letzten Fehlers von Panel",
+                    "ru": "Детали последней ошибки из панели",
+                    "pt": "Detalhes do último erro do painel",
+                    "nl": "Vertaling:",
+                    "fr": "Détails de la dernière erreur de panneau",
+                    "it": "Dettagli dell'ultimo errore da pannello",
+                    "es": "Detalles del último error del panel",
+                    "pl": "Szczegóły ostatniego błędu z panelu",
+                    "uk": "Деталі останньої помилки з панелі",
+                    "zh-cn": "小组最后错误的详情"
+                },
+                "type": "string",
+                "role": "indicator.maintenance",
+                "read": true,
+                "write": false,
+                "def": ""
+            },
+            "native": {}
+        },
+        {
+            "_id": "zones",
+            "type": "device",
+            "common": {
+                "name": {
+                    "en": "Qolsys IQ Zones",
+                    "de": "Qolsys IQ Zones",
+                    "ru": "Qolsys IQ зоны",
+                    "pt": "Zonas de QI da QI da Qolsys",
+                    "nl": "Qolsy IQ Zones",
+                    "fr": "Zones Qolsys IQ",
+                    "it": "Qolsys IQ Zone",
+                    "es": "Zonas Qolsys IQ",
+                    "pl": "Strefa IQ",
+                    "uk": "Qolsys IQ зони",
+                    "zh-cn": "Kolsy IQ区"
+                }
+            },
+            "native": {}
         }
-      },
-      "native": {}
-    }
-  ]
+    ]
 }

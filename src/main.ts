@@ -310,17 +310,6 @@ class QolsysPanel extends utils.Adapter {
     }
 
     /**
-     * The onPanelError function is called when the panel encounters an error.
-     * It logs and sets the lastError status to the error.
-     *
-     * @param error: Error {Error} to log
-     */
-    private async onPanelError(error: Error): Promise<void> {
-        this.log.error(error.message);
-        await this.setStateChangedAsync("panel.lastError", { val: error.message, ack: true });
-    }
-
-    /**
      * The onReady function is called when the adapter instance has been successfully created.
      * It is used to initialize the adapter instance (e.g., variables, functions, states).
      */
