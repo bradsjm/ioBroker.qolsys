@@ -57,6 +57,15 @@ This plugin only supports the IQ Panel basic security features:
 | TEMPERATURE                 | sensor.alarm                |
 | TEMPERATURE_MULTI_FUNCTION  | sensor.alarm                |
 
+## Disclaimer
+
+This plugin is not affiliated with Qolsys, Inc. or Control4. It is a third party adapter that uses the local
+Control 4 reverse-engineered API to control the system. It is not guaranteed to work with all versions of
+Qolsys or the API and may break at any time if the Qolsys API changes.
+
+While there is no known risk of using this plugin, it is theoretically possible that it could cause your Qolsys
+panel to malfunction. Please evaluate your security needs, test the solution thoroughly and use at your own risk.
+
 ## Qolsys Panel Configuration
 
 **Note**: Enabling C4 integration will force the use of 6 digit codes!
@@ -97,6 +106,7 @@ Existing codes will have 00 appended to them.
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
+
 ### 0.0.3 (2023-06-30)
 
 Updated code comments, created code diagram and cleaned up the countdown class.
